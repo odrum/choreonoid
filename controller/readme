@@ -1,0 +1,95 @@
+choreonoidのシンプルコントローラのソースファイル。
+コードはchoreonoidについてきたサンプルプログラムを参考にすればいい。
+公式のやつは間違ってるから参考にしたら動かない。(choreonoid 1.6)
+
+関数の説明を書いておく。
+/*main*/
+cnoid
+choreonoidのシンプルコントローラ用の関数を使うにはこの名前空間を宣言しておく。
+
+class ○○ : public cnoid::SimpleController
+choreonoid側で定義されているSimpleControllerclassを継承する。
+これをやっておくと、初期化と動きの更新をやってくれる。関数も継承する。
+サブクラス内でprivate変数を定義しておく。
+
+virtual bool initialize(SimpleControllerIO* io) override
+初期化関数。ここに関数の扱いを書いておく。
+更新時間の決定。関節をどんな扱いにするか、io(body,link)をサブクラス内変数と結んでおく。
+引数 io を通して制御に関わるオブジェクトや情報を取得できます。
+
+virtual bool control() override
+ここに制御用プログラムを書く。
+更新時間は決定してくれる。
+コントローラの入力・制御・出力処理を行う。制御中この関数は制御ループとして繰り返し実行される。
+
+BodyPtr
+入出力を司るbodyオブジェクトのスマートポインタってやつ。boostに入ってる。
+スマートポインタはデータのデリートタイミングを考えなくていい。
+
+/*SimpleControllerのオブジェクト*/
+timeStep()
+制御ループのステップ時間を設定。この時間でcontrol関数を呼び出す。
+
+Body* body()
+入出力に使うためのBodyオブジェクトを返します。
+これはBodyPtrと同じ。
+
+void setLinkOutput(Link* link, int stateTypes)
+コントローラから出力される指令値の種類をリンクごとに指定します。
+void setJointOutput(int stateTypes)
+コントローラから出力される指令値の種類について、全ての関節に対して一括で指定します。
+
+double timeStep() const
+制御のタイムステップを返します。SimpleControllerのcontrol関数は制御中にこの時間間隔で繰り返し呼ばれることになります。
+
+
+enableIO()
+対象の関節に対して入出力可能にする。
+デフォルトは関節角度を入力、関節トルクを出力とする。
+
+enableInput()
+対象の関節に対して入力可能にする。
+
+enableOutput()
+対象の関節に対して出力可能にする。
+
+joint->setActuationMode(Link::JOINT_TORQUE);
+多分関節の出力タイプ設定。一番右の部分をかえる。
+設定できるのは
+JOINT_ANGLE	　　　　　　関節角度
+JOINT_DISPLACEMENT	　関節変位
+JOINT_VELOCITY	　　　関節速度
+JOINT_ACCELERATION	関節加速度
+JOINT_TORQUE	　　　　関節トルク
+JOINT_FORCE	　　　　　関節(並進)力
+LINK_POSITION	　　　　リンク位置・姿勢
+複数の種類出力したい場合は"|"で区切る
+
+以下ではこのオブジェクトを「ioオブジェクト」と呼ぶことにします。
+
+/*bodyオブジェクトについて*/
+「Bodyオブジェクト」を介して入出力を行う。Bodyオブジェクトはioオブジェクトのbody関数で取得することが可能。
+Bodyオブジェクトにおいて、関節の情報はロボットのリンクをモデル化した「Linkクラス」のオブジェクトに格納される。
+各関節に対応するLinkオブジェクトは、Bodyオブジェクトの以下のような関数を用いて取得できます。
+
+nt numJoints() const
+モデルが有する関節の数を返します。
+Link* joint(int id)
+関節番号(id)に対応するLinkオブジェクトを返します。
+Link* link(const std::string& name)
+モデルファイルで定義されている名前がnameであるLinkオブジェクトを返します。
+取得したLinkオブジェクトに関して、以下のメンバ関数を用いてJ関節状態値へのアクセスが可能。
+
+double& q()
+関節変位値を司る。JOINT_ANGLE, JOINT_DISPLACEMENTに対応します。単位は[rad]または[m]です。
+
+double& dq()
+関節速度値を司る。JOINT_VELOCITYに対応します。単位は[rad/s]または[m/s]です。
+
+double& ddq()
+関節加速度値を司る。JOINT_ACCELERATIONに対応します。単位は[rad/s^2]または[m/s^2]です。
+
+double& u()
+関節トルク（並進力）値を司る。JOINT_TORQUE, JOINT_FORCEに対応します。単位は[N・m]または[N]です。
+
+これらに対して出力することで動作を実現させる。

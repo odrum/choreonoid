@@ -1,0 +1,31 @@
+#VRML V2.0 utf8
+#法政大学　演習２　鉢巻型ドーナツ
+
+Transform{
+ translation 0 0 0
+ children[
+Shape{
+  appearance Appearance{
+    material Material{ diffuseColor 0.3 0.8 0}
+  }
+  geometry Extrusion{ #押し出した形を作るノード
+    #押し出す多角形の形（平面）を与えるフィールド
+    crossSection[
+     0 1 0 0 0  0
+
+    ]
+    #押し出す軌跡のラインを与える
+    spine[
+    0 0 0  1 1 1
+
+    ]
+    #押し出す形の立体を与える
+    scale[
+    1 1 1 1 1 1 1 1 1 1
+    ]
+
+  solid FALSE
+  }
+  }
+ ]
+}

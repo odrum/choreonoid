@@ -1,0 +1,43 @@
+#VRML V2.0 utf8
+
+NavigationInfo { headlight FALSE }
+DirectionalLight { direction 0 0 3 }
+
+Viewpoint{
+    position 0 4 7
+    orientation 1 0 0 -0.52
+}
+
+Shape { #形状の定義
+    appearance Appearance {
+        material Material { diffuseColor 0.5 1 1 }
+    }
+    geometry Sphere {}
+}
+
+Transform{
+    translation 5 2 0.3
+    children Shape {
+        appearance Appearance {
+        material Material { diffuseColor 0.5 0 0 } # red
+    }
+    geometry Box {}
+  }
+}
+Transform {
+    translation -5 0 0
+    children [
+        DEF RED_LIGHT PointLight {
+        color 1 0 0
+        on FALSE
+        }
+    DEF RED_SWITCH TouchSensor {}
+    Shape {
+        appearance Appearance {
+        material Material { emissiveColor 1 0 0 }
+        }
+    geometry Box { size 1 1 1 }
+    }
+  ]
+
+ }

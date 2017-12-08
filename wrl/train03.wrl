@@ -1,0 +1,20 @@
+#VRML V2.0 utf8
+Shape {
+  appearance Appearance {
+  material DEF M Material {}
+  }
+  geometry Sphere { radius 3 }
+ }
+
+DEF TS TimeSensor {
+  cycleInterval 10
+  loop TRUE
+  }
+
+DEF CI ColorInterpolator {
+  key [ 0, 0.5, 1 ]
+  keyValue [ 1 0 0, 0 1 0, 1 0 0 ]
+ }
+
+ROUTE TS.fraction_changed TO CI.set_fraction
+ROUTE CI.value_changed TO M.diffuseColor

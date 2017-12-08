@@ -1,0 +1,389 @@
+#VRML V2.0 utf8
+#choreonoidで制御してみる用のテスト
+#まず、足一本で関節の制御をさせてみる。それ用のモデル。
+
+PROTO Joint [  #リンクの定義
+  exposedField     SFVec3f      center              0 0 0    #関節回転中心の座標を指定
+  exposedField     MFNode       children            []       #子ノードをぶら下げる．これで階層を作る
+  exposedField     MFFloat      llimit              []       #関節回転角の下限値を設定する
+  exposedField     MFFloat      lvlimit             []       #関節回転各速度の上限値を設定する
+  exposedField     SFRotation   limitOrientation    0 0 1 0  #
+  exposedField     SFString     name                ""       #関節名を指定．
+  exposedField     SFRotation   rotation            0 0 1 0  #姿勢を指定．親ノードからのオフセットを指定．
+  exposedField     SFVec3f      scale               1 1 1    #大きさ
+  exposedField     SFRotation   scaleOrientation    0 0 1 0
+  exposedField     MFFloat      stiffness           [ 0 0 0 ]
+  exposedField     SFVec3f      translation         0 0 0    #位置を指定する．親ノードを基準
+  exposedField     MFFloat      ulimit              []       #関節回転角度の上限値．
+  exposedField     MFFloat      uvlimit             []       #関節回転角速度の上限値．
+  exposedField     SFString     jointType           ""       #関節タイプの選択．
+  exposedField     SFInt32      jointId             -1       #関節番号を指定．0から始まる整数値．
+  exposedField     SFVec3f      jointAxis           0 0 1    #関節の軸を設定．”free” は任意軸方向への並進・任意軸回りの回転が可能で、rootリンクが固定されないモデルのrootリンクに設定します（6自由度）。”rotate” はjointAxisで指定する軸回りの回転のみ可能です(1自由度)。”slide” はjointAxisで指定する軸方向への並進直動関節となります(1自由度)。”fixed” は関節を固定します(自由度なし)。”crawler”を指定すると、付随するリンクが簡易的なクローラとして機能するようになります。
+  exposedField     SFFloat      gearRatio           1        #ギア比．100と書くと1/100
+  exposedField     SFFloat      rotorInertia        0        #モータ回転子の慣性モーメント
+  exposedField     SFFloat      rotorResistor       0
+  exposedField     SFFloat      torqueConst         1
+  exposedField     SFFloat      encoderPulse        1
+]
+{
+  Transform {
+    center           IS center
+    children         IS children
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+  }
+}
+
+PROTO Segment [
+  field           SFVec3f     bboxCenter        0 0 0
+  field           SFVec3f     bboxSize          -1 -1 -1
+  exposedField    SFVec3f     centerOfMass      0 0 0                 #重心位置を設定
+  exposedField    MFNode      children          [ ]                   #子ノードをぶら下げる
+  exposedField    SFNode      coord             NULL                  #
+  exposedField    MFNode      displacers        [ ]
+  exposedField    SFFloat     mass              0                     #質量を指定
+  exposedField    MFFloat     momentsOfInertia  [ 0 0 0 0 0 0 0 0 0 ] #重心位置回りの慣性テンソルを指定
+  exposedField    SFString    name              ""                    #物体の名前
+  eventIn         MFNode      addChildren
+  eventIn         MFNode      removeChildren
+]
+{
+  Group {
+    addChildren    IS addChildren
+    bboxCenter     IS bboxCenter
+    bboxSize       IS bboxSize
+    children       IS children
+    removeChildren IS removeChildren
+  }
+}
+
+PROTO Humanoid [ #モデルのルートノード
+  field           SFVec3f    bboxCenter            0 0 0
+  field           SFVec3f    bboxSize              -1 -1 -1
+  exposedField    SFVec3f    center                0 0 0
+  exposedField    MFNode     humanoidBody          [ ]
+  exposedField    MFString   info                  [ ]
+  exposedField    MFNode     joints                [ ]
+  exposedField    SFString   name                  ""
+  exposedField    SFRotation rotation              0 0 1 0
+  exposedField    SFVec3f    scale                 1 1 1
+  exposedField    SFRotation scaleOrientation      0 0 1 0
+  exposedField    MFNode     segments              [ ]
+  exposedField    MFNode     sites                 [ ]
+  exposedField    SFVec3f    translation           0 0 0
+  exposedField    SFString   version               "1.1"
+  exposedField    MFNode     viewpoints            [ ]
+]
+{
+  Transform {
+    bboxCenter       IS bboxCenter
+    bboxSize         IS bboxSize
+    center           IS center
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+    children [
+      Group {
+        children IS viewpoints
+      }
+      Group {
+        children IS humanoidBody
+      }
+    ]
+  }
+}
+
+PROTO VisionSensor [ #視覚センサの定義
+  exposedField SFVec3f    translation       0 0 0        #視点の位置．親ノードからの相対座標
+  exposedField SFRotation rotation          0 0 1 0      #視点の姿勢．親ノードからの相対姿勢
+  exposedField MFNode     children          [ ]
+  exposedField SFFloat    fieldOfView       0.785398     #カメラの視野角．単位はrad
+  exposedField SFString   name              ""           #カメラの名前
+  exposedField SFFloat    frontClipDistance 0.01         #視点から前クリップ面までの距離を指定
+  exposedField SFFloat    backClipDistance  10.0         #視点から後クリップ面までの距離を指定
+  exposedField SFString   type              "NONE"       #カメラタイプの指定．”COLOR”色情報を取得します。”DEPTH”深さ情報を取得します。”COLOR_DEPTH”色情報と深さ情報を取得します。”NONE”いずれの情報も取得しません
+  exposedField SFInt32    sensorId          -1           #センサのIDを設定
+  exposedField SFInt32    width             320          #画像の幅を指定
+  exposedField SFInt32    height            240          #画像の高さを指定
+  exposedField SFFloat    frameRate         30           #カメラのフレームレートを指定
+]
+{
+  Transform {
+    rotation         IS rotation
+    translation      IS translation
+    children         IS children
+  }
+}
+
+
+PROTO ForceSensor [ #力/トルクセンサを定義
+  exposedField SFVec3f    maxForce    -1 -1 -1         #計測可能な力の最大値
+  exposedField SFVec3f    maxTorque   -1 -1 -1         #計測可能な力の最小値
+  exposedField SFVec3f    translation 0 0 0            #センサの位置を指定．親ノードからのオフセット
+  exposedField SFRotation rotation    0 0 1 0          #センサの姿勢を指定．親ノードからのオフセット
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId    -1               #センサのID
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Gyro [ #3軸角速度センサの定義
+  exposedField SFVec3f    maxAngularVelocity -1 -1 -1 #計測可能な最大角速度
+  exposedField SFVec3f    translation        0 0 0    #センサの原点
+  exposedField SFRotation rotation           0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId           -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO AccelerationSensor [ #3軸角速度センサの定義
+  exposedField SFVec3f    maxAcceleration -1 -1 -1
+  exposedField SFVec3f    translation     0 0 0
+  exposedField SFRotation rotation        0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId        -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Plane [
+  exposedField SFVec3f size 10 10 0
+]
+{
+  Box {
+    size IS size
+  }
+}
+NavigationInfo {
+  avatarSize    0.5
+  headlight     TRUE
+  type  ["EXAMINE", "ANY"]
+}
+
+Background { skyColor 0.4 0.6 0.4 }
+
+Viewpoint {
+  position    3 0 0.835
+  orientation 0.5770 0.5775 0.5775 2.0935
+ }
+
+
+#main部開始．
+
+DEF m_test_joint Humanoid{
+  name "m_test_joint"
+
+  humanoidBody [
+  DEF root Joint { #骨盤
+      jointType "fixed"
+      translation 0 0 2
+      children[
+        DEF acc AccelerationSensor {
+          sensorId 0
+          maxAcceleration 1000.0 1000.0 1000.0
+        }
+        DEF gyro Gyro {
+          sensorId 0
+          maxAngularVelocity 100.0 100.0 100.0
+        }
+        DEF root_Link Segment{ #rootの形状
+          centerOfMass 0.0 0.0 0.0
+          mass 1.0
+          momentsOfInertia [ 1 0 0 0 1 0 0 0 1 ]
+          children[
+            Transform {
+              rotation 1 0 0 1.5708
+              children[
+                Shape{
+                  geometry Box{ size 0.1 0.1 0.1 }
+                  appearance Appearance{
+                    material Material{ diffuseColor 0.4 0.8 0.4 }
+                  }
+                } #shape終わり
+              ]
+            }
+          ]
+        } #root_Link終わり
+
+
+                 DEF RR_5 Joint { #後ろ足の肘に当たる関節。x軸方向に回転
+                   jointType "rotate"
+                   jointId 0
+                   jointAxis 0 1 0
+                   translation 0 0 -0.05
+                   children[
+                     DEF RR_5_Link Segment{
+                       centerOfMass 0.0 0.0 0.0
+                       mass 5
+                       momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                       children[
+                         Transform {
+                           rotation 1 0 0 0
+                           children[
+                             Shape{
+                               geometry Cylinder{
+                                 radius 0.03
+                                 height 0.08
+                               }
+                               appearance Appearance{
+                                 material Material{ diffuseColor 0.4 0.4 0.4 }
+                               }
+                             }
+                           ]
+                         }
+                         Transform { #大腿骨
+                           rotation 1 0 0 1.5708
+                           translation 0 0 -0.065
+                           children[
+                             Shape{
+                               geometry Cylinder{
+                                 radius 0.03
+                                 height 0.13
+                               }
+                               appearance Appearance{
+                                 material Material{ diffuseColor 0.4 0.6 0.8 }
+                               }
+                             }
+                           ]
+                         }
+                       ]  #RR_5_Link Segment children 終わり
+                     }  #RR_5_Link Segment 終わり
+
+                         DEF RR_7 Joint { #前足の肘に当たる関節。x軸方向に回転
+                           jointType "rotate"
+                           jointId 1
+                           jointAxis 0 1 0
+                           translation 0 0 -0.13
+                           children[
+                             DEF RR_7_Link Segment{
+                               centerOfMass 0.0 0.0 0.0
+                               mass 5
+                               momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                               children[
+                                 Transform {
+                                   rotation 1 0 0 0
+                                   children[
+                                     Shape{
+                                       geometry Cylinder{
+                                         radius 0.03
+                                         height 0.08
+                                       }
+                                       appearance Appearance{
+                                         material Material{ diffuseColor 0.4 0.4 0.4 }
+                                       }
+                                     }
+                                   ]
+                                 }
+                                 Transform {
+                                   rotation 1 0 0 1.5708
+                                   translation 0 0 -0.065
+                                   children[
+                                     Shape{
+                                       geometry Cylinder{
+                                         radius 0.03
+                                         height 0.13
+                                       }
+                                       appearance Appearance{
+                                         material Material{ diffuseColor 0.8 0.8 0.8 }
+                                       }
+                                     }
+                                   ]
+                                 }
+                               ]  #RR_7_Link Segment children 終わり
+                             }  #RR_7_Link Segment 終わり
+
+                             DEF RR_9 Joint { #前足の肘に当たる関節。x軸方向に回転
+                               jointType "rotate"
+                               jointId 2
+                               jointAxis 0 1 0
+                               translation 0 0 -0.13
+                               children[
+                                 DEF RR_9_Link Segment{
+                                   centerOfMass 0.0 0.0 0.0
+                                   mass 5
+                                   momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                   children[
+                                     Transform {
+                                       rotation 1 0 0 0
+                                       children[
+                                         Shape{
+                                           geometry Cylinder{
+                                             radius 0.03
+                                             height 0.08
+                                           }
+                                           appearance Appearance{
+                                             material Material{ diffuseColor 0.4 0.4 0.4 }
+                                           }
+                                         }
+                                       ]
+                                     }
+                                     Transform {
+                                       rotation 1 0 0 1.5708
+                                       translation 0 0 -0.065
+                                       children[
+                                         Shape{
+                                           geometry Cylinder{
+                                             radius 0.03
+                                             height 0.13
+                                           }
+                                           appearance Appearance{
+                                             material Material{ diffuseColor 0.8 0.8 0.8 }
+                                           }
+                                         }
+                                       ]
+                                     }
+                                   ]  #RR_9_Link Segment children 終わり
+                                 }  #RR_9_Link Segment 終わり
+
+                               ] #RR_9 children 終わり
+                             } #RR_9 終わり
+
+                           ] #RR_7 children 終わり
+                         } #RR_7 終わり
+
+                     ] #RR_5 children 終わり
+                   } #RR_5 終わり
+
+
+  ] #rootjointのchildren終わり．
+
+
+  } #rootjoint終わり
+ ] #HumanoidBody終わり
+
+  joints [
+    USE root,
+
+    USE RR_5,
+    USE RR_7,
+    USE RR_9,
+
+  ]
+  segments [
+    USE root_Link,
+
+    USE RR_5_Link,
+    USE RR_7_Link,
+    USE RR_9_Link,
+
+  ]
+}

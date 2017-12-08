@@ -1,0 +1,37 @@
+#VRML V2.0 utf8
+#法政大学　演習2　サッカーボール
+
+Background { skyColor 1 1 0 }
+
+Transform{
+  translation 0 0 0
+  scale 1 1 1
+  children[
+    Shape{
+    appearance Appearance{
+      material Material{diffuseColor 1 1 1 }
+    }
+    geometry IndexedFaceSet{ #多面体（平面）を作るノード
+      coord Coordinate{ #pointフィールドで多面体の頂点の座標（ｘ，ｙ，ｚの順）
+        point[
+          1 0 0,
+          0 5 0,
+          0 0 1,
+        ]
+      }
+      coordIndex [ #面を構成する頂点の番号を付ける．最後に-1を付ける．
+        0, 1, 2, -1,
+      ]
+      color Color {
+        color [
+          1 1 1,
+        ]
+      }
+      colorPerVertex FALSE
+    }
+
+    }
+
+  ]
+
+}

@@ -1,0 +1,1699 @@
+#VRML V2.0 utf8
+
+PROTO Joint [
+  exposedField     SFVec3f      center              0 0 0
+  exposedField     MFNode       children            []
+  exposedField     MFFloat      llimit              []
+  exposedField     MFFloat      lvlimit             []
+  exposedField     SFRotation   limitOrientation    0 0 1 0
+  exposedField     SFString     name                ""
+  exposedField     SFRotation   rotation            0 0 1 0
+  exposedField     SFVec3f      scale               1 1 1
+  exposedField     SFRotation   scaleOrientation    0 0 1 0
+  exposedField     MFFloat      stiffness           [ 0 0 0 ]
+  exposedField     SFVec3f      translation         0 0 0
+  exposedField     MFFloat      ulimit              []
+  exposedField     MFFloat      uvlimit             []
+  exposedField     SFString     jointType           ""
+  exposedField     SFInt32      jointId             -1
+  exposedField     SFVec3f      jointAxis           0 0 1
+
+  exposedField     SFFloat      gearRatio           1
+  exposedField     SFFloat      rotorInertia        0
+  exposedField     SFFloat      rotorResistor       0
+  exposedField     SFFloat      torqueConst         1
+  exposedField     SFFloat      encoderPulse        1
+]
+{
+  Transform {
+    center           IS center
+    children         IS children
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+  }
+}
+
+PROTO Segment [
+  field           SFVec3f     bboxCenter        0 0 0
+  field           SFVec3f     bboxSize          -1 -1 -1
+  exposedField    SFVec3f     centerOfMass      0 0 0
+  exposedField    MFNode      children          [ ]
+  exposedField    SFNode      coord             NULL
+  exposedField    MFNode      displacers        [ ]
+  exposedField    SFFloat     mass              0 
+  exposedField    MFFloat     momentsOfInertia  [ 0 0 0 0 0 0 0 0 0 ]
+  exposedField    SFString    name              ""
+  eventIn         MFNode      addChildren
+  eventIn         MFNode      removeChildren
+]
+{
+  Group {
+    addChildren    IS addChildren
+    bboxCenter     IS bboxCenter
+    bboxSize       IS bboxSize
+    children       IS children
+    removeChildren IS removeChildren
+  }
+}
+
+PROTO Humanoid [
+  field           SFVec3f    bboxCenter            0 0 0
+  field           SFVec3f    bboxSize              -1 -1 -1
+  exposedField    SFVec3f    center                0 0 0
+  exposedField    MFNode     humanoidBody          [ ]
+  exposedField    MFString   info                  [ ]
+  exposedField    MFNode     joints                [ ]
+  exposedField    SFString   name                  ""
+  exposedField    SFRotation rotation              0 0 1 0
+  exposedField    SFVec3f    scale                 1 1 1
+  exposedField    SFRotation scaleOrientation      0 0 1 0
+  exposedField    MFNode     segments              [ ]
+  exposedField    MFNode     sites                 [ ]
+  exposedField    SFVec3f    translation           0 0 0
+  exposedField    SFString   version               "1.1"
+  exposedField    MFNode     viewpoints            [ ]
+]
+{
+  Transform {
+    bboxCenter       IS bboxCenter
+    bboxSize         IS bboxSize
+    center           IS center
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+    children [
+      Group {
+        children IS viewpoints
+      }
+      Group {
+        children IS humanoidBody 
+      }
+    ]
+  }
+}
+
+PROTO VisionSensor [
+  exposedField SFVec3f    translation       0 0 0
+  exposedField SFRotation rotation          0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFFloat    fieldOfView       0.785398
+  exposedField SFString   name              ""
+  exposedField SFFloat    frontClipDistance 0.01
+  exposedField SFFloat    backClipDistance  10.0
+  exposedField SFString   type              "NONE"
+  exposedField SFInt32    sensorId          -1
+  exposedField SFInt32    width             320
+  exposedField SFInt32    height            240
+  exposedField SFFloat    frameRate         30
+]
+{
+  Transform {
+    rotation         IS rotation
+    translation      IS translation
+    children         IS children
+  }
+}
+
+
+PROTO ForceSensor [  
+  exposedField SFVec3f    maxForce    -1 -1 -1
+  exposedField SFVec3f    maxTorque   -1 -1 -1
+  exposedField SFVec3f    translation 0 0 0
+  exposedField SFRotation rotation    0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId    -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Gyro [
+  exposedField SFVec3f    maxAngularVelocity -1 -1 -1
+  exposedField SFVec3f    translation        0 0 0
+  exposedField SFRotation rotation           0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId           -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO AccelerationSensor [
+  exposedField SFVec3f    maxAcceleration -1 -1 -1
+  exposedField SFVec3f    translation     0 0 0
+  exposedField SFRotation rotation        0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId        -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO RangeSensor [
+  exposedField SFVec3f    translation     0 0 0
+  exposedField SFRotation rotation        0 0 1 0
+  exposedField MFNode     children        [ ]
+  exposedField SFInt32    sensorId        -1
+  exposedField SFFloat    scanAngle       3.14159 #[rad]
+  exposedField SFFloat    scanStep        0.1     #[rad]
+  exposedField SFFloat    scanRate        10      #[Hz]
+  exposedField SFFloat    maxDistance	    10
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Plane [
+  exposedField SFVec3f size 10 10 0
+]
+{
+  Box {
+    size IS size
+  }
+}
+NavigationInfo {
+  avatarSize    0.5
+  headlight     TRUE
+  type  ["EXAMINE", "ANY"]
+}
+
+Background {
+  skyColor 0.4 0.6 0.4
+}
+
+Viewpoint {
+  position    3 0 0.835
+  orientation 0.5770 0.5775 0.5775 2.0935
+}
+
+DEF neko1 Humanoid{
+  humanoidBody [
+    DEF sebone Joint {
+      jointType "fixed"
+      jointId 0
+      translation 0 0 1 
+      ulimit [0.0 0.0 ]
+      llimit [0.0 0.0 ]
+      uvlimit [0.0 0.0 ]
+      lvlimit [0.0 0.0 ]
+      rotorInertia 1.0
+      rotorResistor 1.0
+      children[
+        DEF sebone Segment{
+          centerOfMass 0.0 0.0 0.0 
+          mass 0.1357168 
+          momentsOfInertia [ 3.16672539481851E-5 0.0 0.0 0.0 2.71433605270158E-5 0.0 0.0 0.0 1.17286125734019E-8 ]
+          children[
+            Transform {
+              children[
+                Shape{
+                  geometry Cylinder{
+                    radius 0.02
+                    height 0.04
+                  }
+                  appearance Appearance{
+                    material Material{
+                      diffuseColor 0.0 1.0 0.0
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        DEF front Joint {
+          jointType "rotate"
+          jointId 1
+          jointAxis 1.0 0.0 0.0 
+          translation 0.1175 0 0 
+          ulimit [0.0 0.0 ]
+          llimit [0.0 0.0 ]
+          uvlimit [0.0 0.0 ]
+          lvlimit [0.0 0.0 ]
+          rotorInertia 1.0
+          rotorResistor 1.0
+          children[
+            DEF front Segment{
+              centerOfMass 0.0 0.0 0.0 
+              mass 0.6616194 
+              momentsOfInertia [ 0.0021626684557404 0.0 0.0 0.0 1.32323882569202E-4 0.0 0.0 0.0 8.00988316940888E-7 ]
+              children[
+                Transform {
+                  rotation 0 0 1 1.5708 
+                  children[
+                    Shape{
+                      geometry Cylinder{
+                        radius 0.02
+                        height 0.195
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.8 0.8 0.8
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF front_joint1_1 Joint {
+              jointType "rotate"
+              jointId 2
+              jointAxis 0.0 1.0 0.0 
+              translation 0.0975 0.075 0 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF front_joint1 Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.508938 
+                  momentsOfInertia [ 0.00100515256951605 0.0 0.0 0.0 1.01787601976309E-4 0.0 0.0 0.0 3.7227872945039E-7 ]
+                  children[
+                    Transform {
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.02
+                            height 0.15
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.0 0.1 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF front_leg1_1 Joint {
+                  jointType "rotate"
+                  jointId 3
+                  jointAxis 0.0 0.0 1.0 
+                  translation 0 0.055 -0.05 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF leg1_1 Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 0.1908518 
+                      momentsOfInertia [ 1.69778539233922E-4 0.0 0.0 0.0 2.14708222918777E-5 0.0 0.0 0.0 6.28809404570082E-8 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 1.5708 
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.015
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF front_joint2_1 Joint {
+                      jointType "rotate"
+                      jointId 4
+                      jointAxis 0.0 1.0 0.0 
+                      translation 0 0 -0.05 
+                      ulimit [0.0 0.0 ]
+                      llimit [0.0 0.0 ]
+                      uvlimit [0.0 0.0 ]
+                      lvlimit [0.0 0.0 ]
+                      rotorInertia 1.0
+                      rotorResistor 1.0
+                      children[
+                        DEF front_joint2_1 Segment{
+                          centerOfMass 0.0 0.0 0.0 
+                          mass 0.0572555 
+                          momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                          children[
+                            Transform {
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.015
+                                    height 0.03
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.0 0.1 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF front_leg2_1 Joint {
+                          jointType "fixed"
+                          jointId 5
+                          translation 0 0 -0.053 
+                          ulimit [0.0 0.0 ]
+                          llimit [0.0 0.0 ]
+                          uvlimit [0.0 0.0 ]
+                          lvlimit [0.0 0.0 ]
+                          rotorInertia 1.0
+                          rotorResistor 1.0
+                          children[
+                            DEF front_leg2_1 Segment{
+                              centerOfMass 0.0 0.0 0.0 
+                              mass 0.2023029 
+                              momentsOfInertia [ 2.00802446057533E-4 0.0 0.0 0.0 2.27590716293904E-5 0.0 0.0 0.0 7.43712763176047E-8 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 1.5708 
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.015
+                                        height 0.106
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF front_joint3_1 Joint {
+                              jointType "rotate"
+                              jointId 6
+                              jointAxis 0.0 1.0 0.0 
+                              translation 0 0 -0.053 
+                              ulimit [0.0 0.0 ]
+                              llimit [0.0 0.0 ]
+                              uvlimit [0.0 0.0 ]
+                              lvlimit [0.0 0.0 ]
+                              rotorInertia 1.0
+                              rotorResistor 1.0
+                              children[
+                                DEF front_joint3_1 Segment{
+                                  centerOfMass 0.0 0.0 0.0 
+                                  mass 0.0572555 
+                                  momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                                  children[
+                                    Transform {
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.015
+                                            height 0.03
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.0 0.1 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF front_leg3_1 Joint {
+                                  jointType "fixed"
+                                  jointId 7
+                                  translation 0 0 -0.05 
+                                  ulimit [0.0 0.0 ]
+                                  llimit [0.0 0.0 ]
+                                  uvlimit [0.0 0.0 ]
+                                  lvlimit [0.0 0.0 ]
+                                  rotorInertia 1.0
+                                  rotorResistor 1.0
+                                  children[
+                                    DEF front_leg3_1 Segment{
+                                      centerOfMass 0.0 0.0 0.0 
+                                      mass 0.1908518 
+                                      momentsOfInertia [ 1.69778539233922E-4 0.0 0.0 0.0 2.14708222918777E-5 0.0 0.0 0.0 6.28809404570082E-8 ]
+                                      children[
+                                        Transform {
+                                          rotation 1 0 0 1.5708 
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.015
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                    DEF front_leg4_1 Joint {
+                                      jointType "fixed"
+                                      jointId 8
+                                      translation 0.01 0 -0.06 
+                                      ulimit [0.0 0.0 ]
+                                      llimit [0.0 0.0 ]
+                                      uvlimit [0.0 0.0 ]
+                                      lvlimit [0.0 0.0 ]
+                                      rotorInertia 1.0
+                                      rotorResistor 1.0
+                                      children[
+                                        DEF front_leg4_1 Segment{
+                                          centerOfMass 0.0 0.0 0.0 
+                                          mass 0.405 
+                                          momentsOfInertia [ 1.1475E-4 0.0 0.0 0.0 3.67875E-4 0.0 0.0 0.0 4.21875E-4 ]
+                                          children[
+                                            Transform {
+                                              rotation 0 1 0 0.7 
+                                              children[
+                                                Shape{
+                                                  geometry Box{
+                                                    size 0.1 0.05 0.03
+                                                  }
+                                                  appearance Appearance{
+                                                    material Material{
+                                                      diffuseColor 0.8 0.1 0.0
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                        DEF front_leg5_1 Joint {
+                                          jointType "rotate"
+                                          jointId 9
+                                          jointAxis 0.0 1.0 0.0 
+                                          translation 0.035 0 -0.03 
+                                          ulimit [0.0 0.0 ]
+                                          llimit [0.0 0.0 ]
+                                          uvlimit [0.0 0.0 ]
+                                          lvlimit [0.0 0.0 ]
+                                          rotorInertia 1.0
+                                          rotorResistor 1.0
+                                          children[
+                                            DEF front_leg5_1 Segment{
+                                              centerOfMass 0.0 0.0 0.0 
+                                              mass 0.09542587685279 
+                                              momentsOfInertia [ 2.52480965839673E-5 0.0 0.0 0.0 1.07354111459389E-5 0.0 0.0 0.0 9.35114688295087E-9 ]
+                                              children[
+                                                Transform {
+                                                  children[
+                                                    Shape{
+                                                      geometry Cylinder{
+                                                        radius 0.015
+                                                        height 0.05
+                                                      }
+                                                      appearance Appearance{
+                                                        material Material{
+                                                          diffuseColor 0.8 0.1 0.0
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF front_joint1_2 Joint {
+              jointType "rotate"
+              jointId 10
+              jointAxis 0.0 1.0 0.0 
+              translation 0.0975 -0.075 0 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF front_joint2 Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.508938 
+                  momentsOfInertia [ 0.00100515256951605 0.0 0.0 0.0 1.01787601976309E-4 0.0 0.0 0.0 3.7227872945039E-7 ]
+                  children[
+                    Transform {
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.02
+                            height 0.15
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.0 0.1 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF front_leg1_2 Joint {
+                  jointType "fixed"
+                  jointId 11
+                  translation 0 -0.055 -0.05 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF leg1_2 Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 0.1908518 
+                      momentsOfInertia [ 1.69778539233922E-4 0.0 0.0 0.0 2.14708222918777E-5 0.0 0.0 0.0 6.28809404570082E-8 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 1.5708 
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.015
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF front_joint2_2 Joint {
+                      jointType "rotate"
+                      jointId 12
+                      jointAxis 0.0 1.0 0.0 
+                      translation 0 0 -0.05 
+                      ulimit [0.0 0.0 ]
+                      llimit [0.0 0.0 ]
+                      uvlimit [0.0 0.0 ]
+                      lvlimit [0.0 0.0 ]
+                      rotorInertia 1.0
+                      rotorResistor 1.0
+                      children[
+                        DEF front_joint2_2 Segment{
+                          centerOfMass 0.0 0.0 0.0 
+                          mass 0.0572555 
+                          momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                          children[
+                            Transform {
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.015
+                                    height 0.03
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.0 0.1 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF front_leg2_2 Joint {
+                          jointType "fixed"
+                          jointId 13
+                          translation 0 0 -0.053 
+                          ulimit [0.0 0.0 ]
+                          llimit [0.0 0.0 ]
+                          uvlimit [0.0 0.0 ]
+                          lvlimit [0.0 0.0 ]
+                          rotorInertia 1.0
+                          rotorResistor 1.0
+                          children[
+                            DEF front_leg2_2 Segment{
+                              centerOfMass 0.0 0.0 0.0 
+                              mass 0.2023029 
+                              momentsOfInertia [ 2.00802446057533E-4 0.0 0.0 0.0 2.27590716293904E-5 0.0 0.0 0.0 7.43712763176047E-8 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 1.5708 
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.015
+                                        height 0.106
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF front_joint3_2 Joint {
+                              jointType "rotate"
+                              jointId 14
+                              jointAxis 0.0 1.0 0.0 
+                              translation 0 0 -0.053 
+                              ulimit [0.0 0.0 ]
+                              llimit [0.0 0.0 ]
+                              uvlimit [0.0 0.0 ]
+                              lvlimit [0.0 0.0 ]
+                              rotorInertia 1.0
+                              rotorResistor 1.0
+                              children[
+                                DEF front_joint3_2 Segment{
+                                  centerOfMass 0.0 0.0 0.0 
+                                  mass 0.0572555 
+                                  momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                                  children[
+                                    Transform {
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.015
+                                            height 0.03
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.0 0.1 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF front_leg3_2 Joint {
+                                  jointType "fixed"
+                                  jointId 15
+                                  translation 0 0 -0.05 
+                                  ulimit [0.0 0.0 ]
+                                  llimit [0.0 0.0 ]
+                                  uvlimit [0.0 0.0 ]
+                                  lvlimit [0.0 0.0 ]
+                                  rotorInertia 1.0
+                                  rotorResistor 1.0
+                                  children[
+                                    DEF front_leg3_2 Segment{
+                                      centerOfMass 0.0 0.0 0.0 
+                                      mass 0.1908518 
+                                      momentsOfInertia [ 1.69778539233922E-4 0.0 0.0 0.0 2.14708222918777E-5 0.0 0.0 0.0 6.28809404570082E-8 ]
+                                      children[
+                                        Transform {
+                                          rotation 1 0 0 1.5708 
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.015
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                    DEF front_leg4_2 Joint {
+                                      jointType "fixed"
+                                      jointId 16
+                                      translation 0.01 0 -0.06 
+                                      ulimit [0.0 0.0 ]
+                                      llimit [0.0 0.0 ]
+                                      uvlimit [0.0 0.0 ]
+                                      lvlimit [0.0 0.0 ]
+                                      rotorInertia 1.0
+                                      rotorResistor 1.0
+                                      children[
+                                        DEF front_leg4_2 Segment{
+                                          centerOfMass 0.0 0.0 0.0 
+                                          mass 0.405 
+                                          momentsOfInertia [ 1.1475E-4 0.0 0.0 0.0 3.67875E-4 0.0 0.0 0.0 4.21875E-4 ]
+                                          children[
+                                            Transform {
+                                              rotation 0 1 0 0.7 
+                                              children[
+                                                Shape{
+                                                  geometry Box{
+                                                    size 0.1 0.05 0.03
+                                                  }
+                                                  appearance Appearance{
+                                                    material Material{
+                                                      diffuseColor 0.8 0.1 0.0
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                        DEF front_leg5_2 Joint {
+                                          jointType "fixed"
+                                          jointId 17
+                                          translation 0.035 0 -0.03 
+                                          ulimit [0.0 0.0 ]
+                                          llimit [0.0 0.0 ]
+                                          uvlimit [0.0 0.0 ]
+                                          lvlimit [0.0 0.0 ]
+                                          rotorInertia 1.0
+                                          rotorResistor 1.0
+                                          children[
+                                            DEF front_leg5_2 Segment{
+                                              centerOfMass 0.0 0.0 0.0 
+                                              mass 0.09542587685279 
+                                              momentsOfInertia [ 2.52480965839673E-5 0.0 0.0 0.0 1.07354111459389E-5 0.0 0.0 0.0 9.35114688295087E-9 ]
+                                              children[
+                                                Transform {
+                                                  children[
+                                                    Shape{
+                                                      geometry Cylinder{
+                                                        radius 0.015
+                                                        height 0.05
+                                                      }
+                                                      appearance Appearance{
+                                                        material Material{
+                                                          diffuseColor 0.8 0.1 0.0
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF kubi Joint {
+              jointType "rotate"
+              jointId 18
+              jointAxis 1.0 0.0 1.0 
+              translation 0.15 0 0.04 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF kubi Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.1908518 
+                  momentsOfInertia [ 1.69778539233922E-4 0.0 0.0 0.0 2.14708222918777E-5 0.0 0.0 0.0 6.28809404570082E-8 ]
+                  children[
+                    Transform {
+                      rotation -0.7071 0 0.7071 1.5708 
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.015
+                            height 0.1
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF head Joint {
+                  jointType "fixed"
+                  jointId 19
+                  translation 0.07 0 0.05 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF head Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 4.05 
+                      momentsOfInertia [ 0.00675 0.0 0.0 0.0 0.01096875 0.0 0.0 0.0 0.01096875 ]
+                      children[
+                        Transform {
+                          children[
+                            Shape{
+                              geometry Box{
+                                size 0.15 0.1 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF rear Joint {
+          jointType "rotate"
+          jointId 20
+          jointAxis 1.0 0.0 0.0 
+          translation -0.077 0 0 
+          ulimit [0.0 0.0 ]
+          llimit [0.0 0.0 ]
+          uvlimit [0.0 0.0 ]
+          lvlimit [0.0 0.0 ]
+          rotorInertia 1.0
+          rotorResistor 1.0
+          children[
+            DEF rear Segment{
+              centerOfMass 0.0 0.0 0.0 
+              mass 0.386792887509975 
+              momentsOfInertia [ 4.57575985924301E-4 0.0 0.0 0.0 7.73585775019951E-5 0.0 0.0 0.0 1.69472587379371E-7 ]
+              children[
+                Transform {
+                  rotation 0 0 1 1.5708 
+                  children[
+                    Shape{
+                      geometry Cylinder{
+                        radius 0.02
+                        height 0.114
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.8 0.8 0.8
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF rear_joint1_1 Joint {
+              jointType "rotate"
+              jointId 21
+              jointAxis 0.0 1.0 0.0 
+              translation -0.077 0.08 0 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF rear_joint1_1 Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.542867210540316 
+                  momentsOfInertia [ 0.00121240343687337 0.0 0.0 0.0 1.08573442108063E-4 0.0 0.0 0.0 4.49038309953101E-7 ]
+                  children[
+                    Transform {
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.02
+                            height 0.16
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.0 0.1 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF rear_joint2_1 Joint {
+                  jointType "rotate"
+                  jointId 22
+                  jointAxis 0.0 0.0 1.0 
+                  translation 0 0.07 -0.025 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF rear_joint2_1 Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 0.114511052223348 
+                      momentsOfInertia [ 4.07945623545677E-5 0.0 0.0 0.0 1.28824933751266E-5 0.0 0.0 0.0 1.51090971683584E-8 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 1.5708 
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.015
+                                height 0.06
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.0 0.1 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF rear_leg1_1 Joint {
+                      jointType "fixed"
+                      jointId 23
+                      translation 0 0 -0.03 
+                      ulimit [0.0 0.0 ]
+                      llimit [0.0 0.0 ]
+                      uvlimit [0.0 0.0 ]
+                      lvlimit [0.0 0.0 ]
+                      rotorInertia 1.0
+                      rotorResistor 1.0
+                      children[
+                        DEF rear_leg1_1 Segment{
+                          centerOfMass 0.0 0.0 0.0 
+                          mass 0.185126201094413 
+                          momentsOfInertia [ 1.55567717653005E-4 0.0 0.0 0.0 2.08266976231214E-5 0.0 0.0 0.0 5.76176732048165E-8 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 1.5708 
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.015
+                                    height 0.097
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF rear_joint3_1 Joint {
+                          jointType "rotate"
+                          jointId 24
+                          jointAxis 0.0 1.0 0.0 
+                          translation 0 0 -0.0485 
+                          ulimit [0.0 0.0 ]
+                          llimit [0.0 0.0 ]
+                          uvlimit [0.0 0.0 ]
+                          lvlimit [0.0 0.0 ]
+                          rotorInertia 1.0
+                          rotorResistor 1.0
+                          children[
+                            DEF rear_joint3_1 Segment{
+                              centerOfMass 0.0 0.0 0.0 
+                              mass 0.0572555 
+                              momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                              children[
+                                Transform {
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.015
+                                        height 0.03
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.0 0.1 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF rear_leg2_1 Joint {
+                              jointType "fixed"
+                              jointId 25
+                              translation 0 0 -0.05 
+                              ulimit [0.0 0.0 ]
+                              llimit [0.0 0.0 ]
+                              uvlimit [0.0 0.0 ]
+                              lvlimit [0.0 0.0 ]
+                              rotorInertia 1.0
+                              rotorResistor 1.0
+                              children[
+                                DEF rear_leg2_1 Segment{
+                                  centerOfMass 0.0 0.0 0.0 
+                                  mass 0.211845446613194 
+                                  momentsOfInertia [ 2.29428618682089E-4 0.0 0.0 0.0 2.38326127439843E-5 0.0 0.0 0.0 8.49735624748477E-8 ]
+                                  children[
+                                    Transform {
+                                      rotation 1 0 0 1.5708 
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.015
+                                            height 0.111
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF rear_joint4_1 Joint {
+                                  jointType "rotate"
+                                  jointId 26
+                                  jointAxis 0.0 1.0 0.0 
+                                  translation 0 0 -0.0555 
+                                  ulimit [0.0 0.0 ]
+                                  llimit [0.0 0.0 ]
+                                  uvlimit [0.0 0.0 ]
+                                  lvlimit [0.0 0.0 ]
+                                  rotorInertia 1.0
+                                  rotorResistor 1.0
+                                  children[
+                                    DEF rear_joint4_1 Segment{
+                                      centerOfMass 0.0 0.0 0.0 
+                                      mass 0.0572555 
+                                      momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                                      children[
+                                        Transform {
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.015
+                                                height 0.03
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.0 0.1 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                    DEF rear_leg3_1 Joint {
+                                      jointType "fixed"
+                                      jointId 27
+                                      translation 0 0 -0.0325 
+                                      ulimit [0.0 0.0 ]
+                                      llimit [0.0 0.0 ]
+                                      uvlimit [0.0 0.0 ]
+                                      lvlimit [0.0 0.0 ]
+                                      rotorInertia 1.0
+                                      rotorResistor 1.0
+                                      children[
+                                        DEF rear_leg3_1 Segment{
+                                          centerOfMass 0.0 0.0 0.0 
+                                          mass 0.124053639908627 
+                                          momentsOfInertia [ 5.06552362960227E-5 0.0 0.0 0.0 1.39560344897205E-5 0.0 0.0 0.0 1.87611986281565E-8 ]
+                                          children[
+                                            Transform {
+                                              rotation 1 0 0 1.5708 
+                                              children[
+                                                Shape{
+                                                  geometry Cylinder{
+                                                    radius 0.015
+                                                    height 0.065
+                                                  }
+                                                  appearance Appearance{
+                                                    material Material{
+                                                      diffuseColor 0.8 0.8 0.8
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                        DEF rear_leg4_1 Joint {
+                                          jointType "fixed"
+                                          jointId 28
+                                          translation 0.01 0 -0.04 
+                                          ulimit [0.0 0.0 ]
+                                          llimit [0.0 0.0 ]
+                                          uvlimit [0.0 0.0 ]
+                                          lvlimit [0.0 0.0 ]
+                                          rotorInertia 1.0
+                                          rotorResistor 1.0
+                                          children[
+                                            DEF rear_leg4_1 Segment{
+                                              centerOfMass 0.0 0.0 0.0 
+                                              mass 0.405 
+                                              momentsOfInertia [ 1.1475E-4 0.0 0.0 0.0 3.67875E-4 0.0 0.0 0.0 4.21875E-4 ]
+                                              children[
+                                                Transform {
+                                                  rotation 0 1 0 0.65 
+                                                  children[
+                                                    Shape{
+                                                      geometry Box{
+                                                        size 0.1 0.05 0.03
+                                                      }
+                                                      appearance Appearance{
+                                                        material Material{
+                                                          diffuseColor 0.8 0.1 0.0
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF rear_joint1_2 Joint {
+              jointType "rotate"
+              jointId 29
+              jointAxis 0.0 1.0 0.0 
+              translation -0.077 -0.08 0 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF rear_joint1_2 Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.542867210540316 
+                  momentsOfInertia [ 0.00121240343687337 0.0 0.0 0.0 1.08573442108063E-4 0.0 0.0 0.0 4.49038309953101E-7 ]
+                  children[
+                    Transform {
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.02
+                            height 0.16
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.0 0.1 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF rear_joint2_2 Joint {
+                  jointType "rotate"
+                  jointId 30
+                  jointAxis 0.0 0.0 1.0 
+                  translation 0 -0.07 -0.025 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF rear_joint2_2 Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 0.114511052223348 
+                      momentsOfInertia [ 4.07945623545677E-5 0.0 0.0 0.0 1.28824933751266E-5 0.0 0.0 0.0 1.51090971683584E-8 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 1.5708 
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.015
+                                height 0.06
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.0 0.1 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF rear_leg1_2 Joint {
+                      jointType "rotate"
+                      jointId 31
+                      jointAxis 0.0 0.0 1.0 
+                      translation 0 0 -0.03 
+                      ulimit [0.0 0.0 ]
+                      llimit [0.0 0.0 ]
+                      uvlimit [0.0 0.0 ]
+                      lvlimit [0.0 0.0 ]
+                      rotorInertia 1.0
+                      rotorResistor 1.0
+                      children[
+                        DEF rear_leg1_2 Segment{
+                          centerOfMass 0.0 0.0 0.0 
+                          mass 0.185126201094413 
+                          momentsOfInertia [ 1.55567717653005E-4 0.0 0.0 0.0 2.08266976231214E-5 0.0 0.0 0.0 5.76176732048165E-8 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 1.5708 
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.015
+                                    height 0.097
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF rear_joint3_2 Joint {
+                          jointType "rotate"
+                          jointId 32
+                          jointAxis 0.0 1.0 0.0 
+                          translation 0 0 -0.0485 
+                          ulimit [0.0 0.0 ]
+                          llimit [0.0 0.0 ]
+                          uvlimit [0.0 0.0 ]
+                          lvlimit [0.0 0.0 ]
+                          rotorInertia 1.0
+                          rotorResistor 1.0
+                          children[
+                            DEF rear_joint3_2 Segment{
+                              centerOfMass 0.0 0.0 0.0 
+                              mass 0.0572555 
+                              momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                              children[
+                                Transform {
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.015
+                                        height 0.03
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.0 0.1 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF rear_leg2_2 Joint {
+                              jointType "fixed"
+                              jointId 33
+                              translation 0 0 -0.05 
+                              ulimit [0.0 0.0 ]
+                              llimit [0.0 0.0 ]
+                              uvlimit [0.0 0.0 ]
+                              lvlimit [0.0 0.0 ]
+                              rotorInertia 1.0
+                              rotorResistor 1.0
+                              children[
+                                DEF rear_leg2_2 Segment{
+                                  centerOfMass 0.0 0.0 0.0 
+                                  mass 0.211845446613194 
+                                  momentsOfInertia [ 2.29428618682089E-4 0.0 0.0 0.0 2.38326127439843E-5 0.0 0.0 0.0 8.49735624748477E-8 ]
+                                  children[
+                                    Transform {
+                                      rotation 1 0 0 1.5708 
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.015
+                                            height 0.111
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF rear_joint4_2 Joint {
+                                  jointType "rotate"
+                                  jointId 34
+                                  jointAxis 0.0 1.0 0.0 
+                                  translation 0 0 -0.0555 
+                                  ulimit [0.0 0.0 ]
+                                  llimit [0.0 0.0 ]
+                                  uvlimit [0.0 0.0 ]
+                                  lvlimit [0.0 0.0 ]
+                                  rotorInertia 1.0
+                                  rotorResistor 1.0
+                                  children[
+                                    DEF rear_joint4_2 Segment{
+                                      centerOfMass 0.0 0.0 0.0 
+                                      mass 0.0572555 
+                                      momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                                      children[
+                                        Transform {
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.015
+                                                height 0.03
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.0 0.1 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                    DEF rear_leg3_2 Joint {
+                                      jointType "fixed"
+                                      jointId 35
+                                      translation 0 0 -0.0325 
+                                      ulimit [0.0 0.0 ]
+                                      llimit [0.0 0.0 ]
+                                      uvlimit [0.0 0.0 ]
+                                      lvlimit [0.0 0.0 ]
+                                      rotorInertia 1.0
+                                      rotorResistor 1.0
+                                      children[
+                                        DEF rear_leg3_2 Segment{
+                                          centerOfMass 0.0 0.0 0.0 
+                                          mass 0.124053639908627 
+                                          momentsOfInertia [ 5.06552362960227E-5 0.0 0.0 0.0 1.39560344897205E-5 0.0 0.0 0.0 1.87611986281565E-8 ]
+                                          children[
+                                            Transform {
+                                              rotation 1 0 0 1.5708 
+                                              children[
+                                                Shape{
+                                                  geometry Cylinder{
+                                                    radius 0.015
+                                                    height 0.065
+                                                  }
+                                                  appearance Appearance{
+                                                    material Material{
+                                                      diffuseColor 0.8 0.8 0.8
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                        DEF rear_joint4_2 Joint {
+                                          jointType "rotate"
+                                          jointId 36
+                                          jointAxis 0.0 1.0 0.0 
+                                          translation 0.01 0 -0.04 
+                                          ulimit [0.0 0.0 ]
+                                          llimit [0.0 0.0 ]
+                                          uvlimit [0.0 0.0 ]
+                                          lvlimit [0.0 0.0 ]
+                                          rotorInertia 1.0
+                                          rotorResistor 1.0
+                                          children[
+                                            DEF rear_leg4_2 Segment{
+                                              centerOfMass 0.0 0.0 0.0 
+                                              mass 0.405 
+                                              momentsOfInertia [ 1.1475E-4 0.0 0.0 0.0 3.67875E-4 0.0 0.0 0.0 4.21875E-4 ]
+                                              children[
+                                                Transform {
+                                                  rotation 0 1 0 0.65 
+                                                  children[
+                                                    Shape{
+                                                      geometry Box{
+                                                        size 0.1 0.05 0.03
+                                                      }
+                                                      appearance Appearance{
+                                                        material Material{
+                                                          diffuseColor 0.8 0.1 0.0
+                                                        }
+                                                      }
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF sippo_joint Joint {
+              jointType "rotate"
+              jointId 37
+              jointAxis 1.0 0.0 -1.0 
+              translation -0.1 0 0.025 
+              ulimit [0.0 0.0 ]
+              llimit [0.0 0.0 ]
+              uvlimit [0.0 0.0 ]
+              lvlimit [0.0 0.0 ]
+              rotorInertia 1.0
+              rotorResistor 1.0
+              children[
+                DEF sippo_joint Segment{
+                  centerOfMass 0.0 0.0 0.0 
+                  mass 0.0572555 
+                  momentsOfInertia [ 7.51478780215721E-6 0.0 0.0 0.0 6.44124668756332E-6 0.0 0.0 0.0 2.78325474153971E-9 ]
+                  children[
+                    Transform {
+                      rotation 0.7071 0 0.7071 1.5708 
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.015
+                            height 0.03
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF sippo Joint {
+                  jointType "rotate"
+                  jointId 38
+                  jointAxis 1.0 0.0 1.0 
+                  translation -0.11 0 -0.11 
+                  ulimit [0.0 0.0 ]
+                  llimit [0.0 0.0 ]
+                  uvlimit [0.0 0.0 ]
+                  lvlimit [0.0 0.0 ]
+                  rotorInertia 1.0
+                  rotorResistor 1.0
+                  children[
+                    DEF sippo Segment{
+                      centerOfMass 0.0 0.0 0.0 
+                      mass 0.57255526111674 
+                      momentsOfInertia [ 0.00432637069181337 0.0 0.0 0.0 6.44124668756332E-5 0.0 0.0 0.0 1.60235951548643E-6 ]
+                      children[
+                        Transform {
+                          rotation -0.7071 0 0.7071 1.5708 
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.015
+                                height 0.3
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  joints [
+    USE sebone,
+    USE front,
+    USE front_joint1_1,
+    USE front_leg1_1,
+    USE front_joint2_1,
+    USE front_leg2_1,
+    USE front_joint3_1,
+    USE front_leg3_1,
+    USE front_leg4_1,
+    USE front_leg5_1,
+    USE front_joint1_2,
+    USE front_leg1_2,
+    USE front_joint2_2,
+    USE front_leg2_2,
+    USE front_joint3_2,
+    USE front_leg3_2,
+    USE front_leg4_2,
+    USE front_leg5_2,
+    USE kubi,
+    USE head,
+    USE rear,
+    USE rear_joint1_1,
+    USE rear_joint2_1,
+    USE rear_leg1_1,
+    USE rear_joint3_1,
+    USE rear_leg2_1,
+    USE rear_joint4_1,
+    USE rear_leg3_1,
+    USE rear_leg4_1,
+    USE rear_joint1_2,
+    USE rear_joint2_2,
+    USE rear_leg1_2,
+    USE rear_joint3_2,
+    USE rear_leg2_2,
+    USE rear_joint4_2,
+    USE rear_leg3_2,
+    USE rear_joint4_2,
+    USE sippo_joint,
+    USE sippo,
+  ]
+  segments [
+    USE sebone,
+    USE front,
+    USE front_joint1,
+    USE leg1_1,
+    USE front_joint2_1,
+    USE front_leg2_1,
+    USE front_joint3_1,
+    USE front_leg3_1,
+    USE front_leg4_1,
+    USE front_leg5_1,
+    USE front_joint2,
+    USE leg1_2,
+    USE front_joint2_2,
+    USE front_leg2_2,
+    USE front_joint3_2,
+    USE front_leg3_2,
+    USE front_leg4_2,
+    USE front_leg5_2,
+    USE kubi,
+    USE head,
+    USE rear,
+    USE rear_joint1_1,
+    USE rear_joint2_1,
+    USE rear_leg1_1,
+    USE rear_joint3_1,
+    USE rear_leg2_1,
+    USE rear_joint4_1,
+    USE rear_leg3_1,
+    USE rear_leg4_1,
+    USE rear_joint1_2,
+    USE rear_joint2_2,
+    USE rear_leg1_2,
+    USE rear_joint3_2,
+    USE rear_leg2_2,
+    USE rear_joint4_2,
+    USE rear_leg3_2,
+    USE rear_leg4_2,
+    USE sippo_joint,
+    USE sippo,
+  ]
+}

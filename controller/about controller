@@ -1,0 +1,15 @@
+○car_Controller1
+二輪の移動ロボットに関節トルクを出力する。
+
+
+○m_test_joint_controller
+CPGの出力を関節に入れるコントローラ。CPGは１つだけ。
+もっといい感じにできそう。
+
+○m_test_oneleg_Controller
+CPGの出力を関節に入れるコントローラ。
+m_test_joint_controllerを配列を使って表したもの。
+ただ、プログラムが長くなってしまう。
+
+○Neko_gain_Controller
+僕のネコロボットに対して、ゲインで姿勢制御を行わせる。

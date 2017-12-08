@@ -1,0 +1,1815 @@
+#VRML V2.0 utf8
+#ネコ骨格を参考にしたロボットモデル Ver2.0
+#参考にしたモデルは新猫種大図鑑P56.57 定規で測った。
+#背骨の長さを基準にしている。３０cmにした。他の所はそれに合わせて2.608695652倍した
+#図鑑　背骨11.5　上腕骨4.2　尺骨5.5　腸骨3　大腿骨5　脛骨5　中足骨3.5　
+
+
+PROTO Joint [  #リンクの定義
+  exposedField     SFVec3f      center              0 0 0    #関節回転中心の座標を指定
+  exposedField     MFNode       children            []       #子ノードをぶら下げる．これで階層を作る
+  exposedField     MFFloat      llimit              []       #関節回転角の下限値を設定する
+  exposedField     MFFloat      lvlimit             []       #関節回転各速度の上限値を設定する
+  exposedField     SFRotation   limitOrientation    0 0 1 0  #
+  exposedField     SFString     name                ""       #関節名を指定．
+  exposedField     SFRotation   rotation            0 0 1 0  #姿勢を指定．親ノードからのオフセットを指定．
+  exposedField     SFVec3f      scale               1 1 1    #大きさ
+  exposedField     SFRotation   scaleOrientation    0 0 1 0
+  exposedField     MFFloat      stiffness           [ 0 0 0 ]
+  exposedField     SFVec3f      translation         0 0 0    #位置を指定する．親ノードを基準
+  exposedField     MFFloat      ulimit              []       #関節回転角度の上限値．
+  exposedField     MFFloat      uvlimit             []       #関節回転角速度の上限値．
+  exposedField     SFString     jointType           ""       #関節タイプの選択．
+  exposedField     SFInt32      jointId             -1       #関節番号を指定．0から始まる整数値．
+  exposedField     SFVec3f      jointAxis           0 0 1    #関節の軸を設定．”free” は任意軸方向への並進・任意軸回りの回転が可能で、rootリンクが固定されないモデルのrootリンクに設定します（6自由度）。”rotate” はjointAxisで指定する軸回りの回転のみ可能です(1自由度)。”slide” はjointAxisで指定する軸方向への並進直動関節となります(1自由度)。”fixed” は関節を固定します(自由度なし)。”crawler”を指定すると、付随するリンクが簡易的なクローラとして機能するようになります。
+  exposedField     SFFloat      gearRatio           1        #ギア比．100と書くと1/100
+  exposedField     SFFloat      rotorInertia        0        #モータ回転子の慣性モーメント
+  exposedField     SFFloat      rotorResistor       0
+  exposedField     SFFloat      torqueConst         1
+  exposedField     SFFloat      encoderPulse        1
+]
+{
+  Transform {
+    center           IS center
+    children         IS children
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+  }
+}
+
+PROTO Segment [
+  field           SFVec3f     bboxCenter        0 0 0
+  field           SFVec3f     bboxSize          -1 -1 -1
+  exposedField    SFVec3f     centerOfMass      0 0 0                 #重心位置を設定
+  exposedField    MFNode      children          [ ]                   #子ノードをぶら下げる
+  exposedField    SFNode      coord             NULL                  #
+  exposedField    MFNode      displacers        [ ]
+  exposedField    SFFloat     mass              0                     #質量を指定
+  exposedField    MFFloat     momentsOfInertia  [ 0 0 0 0 0 0 0 0 0 ] #重心位置回りの慣性テンソルを指定
+  exposedField    SFString    name              ""                    #物体の名前
+  eventIn         MFNode      addChildren
+  eventIn         MFNode      removeChildren
+]
+{
+  Group {
+    addChildren    IS addChildren
+    bboxCenter     IS bboxCenter
+    bboxSize       IS bboxSize
+    children       IS children
+    removeChildren IS removeChildren
+  }
+}
+
+PROTO Humanoid [ #モデルのルートノード
+  field           SFVec3f    bboxCenter            0 0 0
+  field           SFVec3f    bboxSize              -1 -1 -1
+  exposedField    SFVec3f    center                0 0 0
+  exposedField    MFNode     humanoidBody          [ ]
+  exposedField    MFString   info                  [ ]
+  exposedField    MFNode     joints                [ ]
+  exposedField    SFString   name                  ""
+  exposedField    SFRotation rotation              0 0 1 0
+  exposedField    SFVec3f    scale                 1 1 1
+  exposedField    SFRotation scaleOrientation      0 0 1 0
+  exposedField    MFNode     segments              [ ]
+  exposedField    MFNode     sites                 [ ]
+  exposedField    SFVec3f    translation           0 0 0
+  exposedField    SFString   version               "1.1"
+  exposedField    MFNode     viewpoints            [ ]
+]
+{
+  Transform {
+    bboxCenter       IS bboxCenter
+    bboxSize         IS bboxSize
+    center           IS center
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+    children [
+      Group {
+        children IS viewpoints
+      }
+      Group {
+        children IS humanoidBody
+      }
+    ]
+  }
+}
+
+PROTO VisionSensor [ #視覚センサの定義
+  exposedField SFVec3f    translation       0 0 0        #視点の位置．親ノードからの相対座標
+  exposedField SFRotation rotation          0 0 1 0      #視点の姿勢．親ノードからの相対姿勢
+  exposedField MFNode     children          [ ]
+  exposedField SFFloat    fieldOfView       0.785398     #カメラの視野角．単位はrad
+  exposedField SFString   name              ""           #カメラの名前
+  exposedField SFFloat    frontClipDistance 0.01         #視点から前クリップ面までの距離を指定
+  exposedField SFFloat    backClipDistance  10.0         #視点から後クリップ面までの距離を指定
+  exposedField SFString   type              "NONE"       #カメラタイプの指定．”COLOR”色情報を取得します。”DEPTH”深さ情報を取得します。”COLOR_DEPTH”色情報と深さ情報を取得します。”NONE”いずれの情報も取得しません
+  exposedField SFInt32    sensorId          -1           #センサのIDを設定
+  exposedField SFInt32    width             320          #画像の幅を指定
+  exposedField SFInt32    height            240          #画像の高さを指定
+  exposedField SFFloat    frameRate         30           #カメラのフレームレートを指定
+]
+{
+  Transform {
+    rotation         IS rotation
+    translation      IS translation
+    children         IS children
+  }
+}
+
+
+PROTO ForceSensor [ #力/トルクセンサを定義
+  exposedField SFVec3f    maxForce    -1 -1 -1         #計測可能な力の最大値
+  exposedField SFVec3f    maxTorque   -1 -1 -1         #計測可能な力の最小値
+  exposedField SFVec3f    translation 0 0 0            #センサの位置を指定．親ノードからのオフセット
+  exposedField SFRotation rotation    0 0 1 0          #センサの姿勢を指定．親ノードからのオフセット
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId    -1               #センサのID
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Gyro [ #3軸角速度センサの定義
+  exposedField SFVec3f    maxAngularVelocity -1 -1 -1 #計測可能な最大角速度
+  exposedField SFVec3f    translation        0 0 0    #センサの原点
+  exposedField SFRotation rotation           0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId           -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO AccelerationSensor [ #3軸角速度センサの定義
+  exposedField SFVec3f    maxAcceleration -1 -1 -1
+  exposedField SFVec3f    translation     0 0 0
+  exposedField SFRotation rotation        0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId        -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Plane [
+  exposedField SFVec3f size 10 10 0
+]
+{
+  Box {
+    size IS size
+  }
+}
+NavigationInfo {
+  avatarSize    0.5
+  headlight     TRUE
+  type  ["EXAMINE", "ANY"]
+}
+
+Background { skyColor 0.4 0.6 0.4 }
+
+Viewpoint {
+  position    3 0 0.835
+  orientation 0.5770 0.5775 0.5775 2.0935
+ }
+
+
+#main部開始．
+
+DEF m_nekover2.0 Humanoid{
+  humanoidBody [
+  DEF root Joint { #骨盤
+      jointType "free"
+      translation 0 0 2
+      children[
+        DEF acc AccelerationSensor {
+          sensorId 0
+          maxAcceleration 1000.0 1000.0 1000.0
+        }
+        DEF gyro Gyro {
+          sensorId 0
+          maxAngularVelocity 100.0 100.0 100.0
+        }
+        DEF root_Link Segment{ #rootの形状
+          centerOfMass 0.0 0.0 0.0
+          mass 0.5
+          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+          children[
+            Transform {
+              rotation 1 0 0 1.5708
+              children[
+                Shape{
+                  geometry Box{ size 0.1 0.1 0.1 }
+                  appearance Appearance{
+                    material Material{ diffuseColor 0.4 0.8 0.4 }
+                  }
+                } #shape終わり
+              ]
+            }
+          ]
+        } #root_Link終わり
+
+  DEF SPINE_1 Joint { #関節．rootと右タイヤを繋げる
+    jointType "rotate" #固定（自由度なし）．
+    jointAxis 1 0 0
+    jointId 0
+    translation 0.055 0 0
+    children[
+      DEF SPINE_1_Link Segment{ #関節の形状を決める．
+        centerOfMass 0.0 0.0 0.0
+        mass 0.000085
+        momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+        children[
+          Transform {
+          rotation 0 0 1 1.57
+          children[
+            Shape{
+              geometry Cylinder{ #関節の形状
+                radius 0.03
+                height 0.03
+              }
+              appearance Appearance{
+                material Material{ diffuseColor 0.8 0.8 0.8 }
+              }
+            }
+          ]
+          }
+        ] #spine_1_Link Segment children終わり
+      } #spine_1_Link Segment終わり
+
+        DEF SPINE_2 Joint { #背骨．rootと右タイヤを繋げる
+        jointType "rotate" #固定（自由度なし）．
+        jointAxis 0 1 0
+          jointId 1
+          translation 0.03 0 0
+          children[
+            DEF SPINE_2_Link Segment{ #関節の形状を決める．
+              centerOfMass 0.0 0.0 0.0
+              mass 0.000085
+              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+              children[
+                Transform {
+                  rotation 0 0 1 1.57
+                  children[
+                    Shape{
+                      geometry Cylinder{ #関節の形状
+                        radius 0.03
+                        height 0.03
+                      }
+                      appearance Appearance{
+                        material Material{ diffuseColor 0 0 0.8 }
+                      }
+                    }
+                  ]
+                }
+              ] #spine_2_Link Segment children終わり
+            } #spine_2_Link Segment終わり
+
+          DEF SPINE_3 Joint { #背骨．rootと右タイヤを繋げる
+          jointType "rotate" #固定（自由度なし）．
+          jointAxis 1 0 0
+            jointId 2
+            translation 0.03 0 0
+            children[
+              DEF SPINE_3_Link Segment{ #関節の形状を決める．
+                centerOfMass 0.0 0.0 0.0
+                mass 0.000085
+                momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                children[
+                  Transform {
+                    rotation 0 0 1 1.57
+                    children[
+                      Shape{
+                        geometry Cylinder{ #関節の形状
+                          radius 0.03
+                          height 0.03
+                        }
+                        appearance Appearance{
+                          material Material{ diffuseColor 0.8 0.8 0.8 }
+                        }
+                      }
+                    ]
+                  }
+                ] #spine_3_Link Segment children終わり
+              } #spine_3_Link Segment終わり
+
+            DEF SPINE_4 Joint { #背骨．rootと右タイヤを繋げる
+            jointType "rotate" #固定（自由度なし）．
+            jointAxis 0 1 0
+              jointId 3
+              translation 0.03 0 0
+              children[
+                DEF SPINE_4_Link Segment{ #関節の形状を決める．
+                  centerOfMass 0.0 0.0 0.0
+                  mass 0.000085
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      rotation 0 0 1 1.57
+                      children[
+                        Shape{
+                          geometry Cylinder{ #関節の形状
+                            radius 0.03
+                            height 0.03
+                          }
+                          appearance Appearance{
+                            material Material{ diffuseColor 0 0 0.8 }
+                          }
+                        }
+                      ]
+                     }
+                  ] #spine_4_Link Segment children終わり
+                } #spine_4_Link Segment終わり
+
+              DEF SPINE_5 Joint { #背骨．rootと右タイヤを繋げる
+              jointType "rotate" #固定（自由度なし）．
+              jointAxis 0 1 0
+                jointId 4
+                translation 0.03 0 0
+                children[
+                  DEF SPINE_5_Link Segment{ #関節の形状を決める．
+                    centerOfMass 0.0 0.0 0.0
+                    mass 0.000085
+                    momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                    children[
+                      Transform {
+                        rotation 0 0 1 1.57
+                        children[
+                          Shape{
+                            geometry Cylinder{ #関節の形状
+                              radius 0.03
+                              height 0.03
+                            }
+                            appearance Appearance{
+                              material Material{ diffuseColor 0.8 0.8 0.8 }
+                            }
+                          }
+                        ]
+                      }
+                    ] #spine_5_Link Segment children終わり
+                  } #spine_5_Link Segment終わり
+
+                DEF SPINE_6 Joint { #背骨．rootと右タイヤを繋げる
+                jointType "rotate" #固定（自由度なし）．
+                jointAxis 0 1 0
+                  jointId 5
+                  translation 0.03 0 0
+                  children[
+                    DEF SPINE_6_Link Segment{ #関節の形状を決める．
+                      centerOfMass 0.0 0.0 0.0
+                      mass 0.000085
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          rotation 0 0 1 1.57
+                          children[
+                            Shape{
+                              geometry Cylinder{ #関節の形状
+                                radius 0.03
+                                height 0.03
+                              }
+                              appearance Appearance{
+                                material Material{ diffuseColor 0 0 0.8 }
+                              }
+                            }
+                          ]
+                        }
+                      ] #spine_6_Link Segment children終わり
+                    } #spine_6_Link Segment終わり
+
+                  DEF SPINE_7 Joint { #背骨．rootと右タイヤを繋げる
+                  jointType "rotate" #固定（自由度なし）．
+                  jointAxis 0 1 0
+                    jointId 6
+                    translation 0.03 0 0
+                    children[
+                      DEF SPINE_7_Link Segment{ #関節の形状を決める．
+                        centerOfMass 0.0 0.0 0.0
+                        mass 0.000085
+                        momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                        children[
+                          Transform {
+                            rotation 0 0 1 1.57
+                            children[
+                              Shape{
+                                geometry Cylinder{ #関節の形状
+                                  radius 0.03
+                                  height 0.03
+                                }
+                                appearance Appearance{
+                                  material Material{ diffuseColor 0.8 0.8 0.8 }
+                                }
+                              }
+                            ]
+                          }
+                        ] #spine_7_Link Segment children終わり
+                      } #spine_7_Link Segment終わり
+
+                    DEF SPINE_8 Joint { #背骨．rootと右タイヤを繋げる
+                    jointType "rotate" #固定（自由度なし）．
+                    jointAxis 0 1 0
+                      jointId 7
+                      translation 0.03 0 0
+                      children[
+                        DEF SPINE_8_Link Segment{ #関節の形状を決める．
+                          centerOfMass 0.0 0.0 0.0
+                          mass 0.000085
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 0 0 1 1.57
+                              children[
+                                Shape{
+                                  geometry Cylinder{ #関節の形状
+                                    radius 0.03
+                                    height 0.03
+                                  }
+                                  appearance Appearance{
+                                    material Material{ diffuseColor 0 0 0.8 }
+                                  }
+                                }
+                              ]
+                            }
+                          ] #spine_8_Link Segment children終わり
+                        } #spine_8_Link Segment終わり
+
+                      DEF SPINE_9 Joint { #背骨．rootと右タイヤを繋げる
+                      jointType "rotate" #固定（自由度なし）．
+                      jointAxis 0 1 0
+                        jointId 8
+                        translation 0.03 0 0
+                        children[
+                          DEF SPINE_9_Link Segment{ #関節の形状を決める．
+                            centerOfMass 0.0 0.0 0.0
+                            mass 0.000085
+                            momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                            children[
+                              Transform {
+                                rotation 0 0 1 1.57
+                                children[
+                                  Shape{
+                                    geometry Cylinder{ #関節の形状
+                                      radius 0.03
+                                      height 0.03
+                                    }
+                                    appearance Appearance{
+                                      material Material{ diffuseColor 0.8 0.8 0.8 }
+                                    }
+                                  }
+                                ]
+                              }
+                            ] #spine_9_Link Segment children終わり
+                          } #spine_9_Link Segment終わり
+
+                        DEF SPINE_10 Joint { #背骨．rootと右タイヤを繋げる
+                        jointType "rotate" #固定（自由度なし）．
+                        jointAxis 0 1 0
+                          jointId 9
+                          translation 0.03 0 0
+                          children[
+                            DEF SPINE_10_Link Segment{ #関節の形状を決める．
+                              centerOfMass 0.0 0.0 0.0
+                              mass 0.000085
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 0 0 1 1.57
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{ #関節の形状
+                                        radius 0.03
+                                        height 0.03
+                                      }
+                                      appearance Appearance{
+                                        material Material{ diffuseColor 0 0 0.8 }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ] #spine_10_Link Segment children終わり
+                            } #spine_10_Link Segment終わり
+                          ] #spine_10 children 終わり
+                        } #spine_10 終わり
+
+                        ] #spine_9 children 終わり
+                      } #spine_9 終わり
+
+                      ] #spine_8 children 終わり
+                    } #spine_8 終わり
+
+                    ] #spine_7 children 終わり
+                  } #spine_7 終わり
+
+                  ] #spine_6 children 終わり
+                } #spine_6 終わり
+
+                ] #spine_5 children 終わり
+              } #spine_5 終わり
+
+              ] #spine_4 children 終わり
+            } #spine_4 終わり
+
+            ] #spine_3 children 終わり
+          } #spine_3 終わり
+
+          ] #spine_2 children 終わり
+        } #spine_2 終わり
+
+    ] #spine_1 children 終わり
+  } #spine_1 終わり
+
+  DEF SHOULDER Joint{ #前足の軸となる所
+  jointType "rotate" #固定（自由度なし）．
+  jointAxis 0 1 0
+    jointId 10
+    translation 0.4 0 0
+    children[
+      DEF SHOULDER_Link Segment{
+        centerOfMass 0 0 0
+        mass 1.0
+        momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+        children[
+          Transform {
+            rotation 0 0 1 1.57
+            children[
+              Shape{
+                geometry Box{ size 0.1 0.1 0.1 }
+                appearance Appearance{
+                  material Material{ diffuseColor 0.8 0.8 0.8 }
+                }
+              }
+            ]
+          }
+         ] #SHOULDER_Link Segment children終わり
+      } #SHOULDER_Link Segment 終わり
+
+      DEF FL_1 Joint{ #肩甲骨. y軸周りに回転する
+        jointType "rotate"
+        jointId 11
+        jointAxis 0.0 1.0 0.0
+        translation 0 0.05 0
+        children[
+          DEF FL_1_Link Segment{
+            centerOfMass 0.0 0.0 0.0
+            mass 2.2
+            momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+            children[
+              Transform {
+                translation 0 0.05 0
+                rotation 0 1 0 0
+                children[
+                  Shape{
+                    geometry Cylinder{
+                      radius 0.05
+                      height 0.1
+                    }
+                    appearance Appearance{
+                      material Material{ diffuseColor 0.8 0.8 0.8 }
+                    }
+                  }
+                ]
+              }
+            ]
+          } #FL_1_Link Segment 終わり
+
+          DEF FL_2 Joint { #肩甲骨. x軸周りに回転する
+            jointType "rotate"
+            jointId 12
+            jointAxis 1.0 0.0 0.0
+            translation 0 0.1 0
+            rotation 0 1 0 0
+            children[
+              DEF FL_2_Link Segment{
+                centerOfMass 0.0 0.0 0.0
+                mass 0.8
+                momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                children[
+                  Transform {
+                    rotation 0 0 1 1.5708
+                    children[
+                      Shape{
+                        geometry Cylinder{
+                          radius 0.05
+                          height 0.1
+                        }
+                        appearance Appearance{
+                          material Material{ diffuseColor 0.8 0.8 0.8 }
+                        }
+                      }
+                    ]
+                  }
+                ] #FL_2_Link Segment children 終わり
+              } #FL_2_Link Segment 終わり
+
+            DEF FL_3 Joint { #z軸方向に回転させるための関節
+              jointType "rotate"
+              jointId 13
+              jointAxis 0.0 0.0 1.0
+              translation 0 0 -0.05
+                children[
+                  DEF FL_3_Link Segment{
+                    centerOfMass 0.0 0.0 0.0
+                    mass 0.0863
+                    momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                    children[
+                      Transform {
+                        rotation 1 0 0 1.5708
+                        children[
+                          Shape{
+                            geometry Cylinder{
+                              radius 0.04
+                              height 0.01
+                            }
+                            appearance Appearance{
+                              material Material{ diffuseColor 0.4 0.4 0.4 }
+                            }
+                          }
+                        ]
+                      }
+                    ]  #FL_3_Link Segment children 終わり
+                  }  #FL_3_Link Segment 終わり
+
+                DEF FL_4 Joint { #上腕骨.
+                jointType "rotate" #固定（自由度なし）．
+                jointAxis 0 1 0
+                  jointId 14
+                  translation 0 0 -0.06
+                  children[
+                    DEF FL_4_Link Segment{
+                      centerOfMass 0.0 0.0 0.0
+                      mass 0.086
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 1.5708
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.03
+                                height 0.11
+                              }
+                              appearance Appearance{
+                                material Material{ diffuseColor 0.8 0.8 0.8 }
+                              }
+                            }
+                          ]
+                        }
+                      ]  #FL_4_Link Segment children 終わり
+                    }  #FL_4_Link Segment 終わり
+
+                    DEF FL_5 Joint { #前足の肘に当たる関節。x軸方向に回転
+                      jointType "rotate"
+                      jointId 15
+                      jointAxis 0 1 0
+                      translation 0 0 -0.055
+                      children[
+                        DEF FL_5_Link Segment{
+                          centerOfMass 0.0 0.0 0.0
+                          mass 0.086
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 0
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.03
+                                    height 0.08
+                                  }
+                                  appearance Appearance{
+                                    material Material{ diffuseColor 0.4 0.4 0.4 }
+                                  }
+                                }
+                              ]
+                            }
+                          ]  #FL_5_Link Segment children 終わり
+                        }  #FL_5_Link Segment 終わり
+
+                        DEF FL_6 Joint { #尺骨
+                        jointType "rotate" #固定（自由度なし）．
+                        jointAxis 0 1 0
+                          jointId 16
+                          translation 0 0 -0.0725
+                          rotation 0 1 0 0
+                          children[
+                            DEF FL_6_Link Segment{
+                              centerOfMass 0.0 0.0 0.0
+                              mass 0.086
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.145
+                                      }
+                                      appearance Appearance{
+                                        material Material{ diffuseColor 0.8 0.8 0.8 }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]  #FL_6_Link Segment children 終わり
+                            }  #FL_6_Link Segment 終わり
+
+                          DEF FL_7 Joint { #前足首に当たる関節。x軸方向に回転
+                          jointType "rotate" #固定（自由度なし）．
+                          jointAxis 0 1 0
+                            jointId 17
+                            jointAxis 0 1 0
+                            translation 0 0 -0.0875
+                            children[
+                              DEF FL_7_Link Segment{
+                                centerOfMass 0.0 0.0 0.0
+                                mass 0.086
+                                momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                children[
+                                  Transform {
+                                    rotation 1 0 0 0
+                                    children[
+                                      Shape{
+                                        geometry Cylinder{
+                                          radius 0.03
+                                          height 0.08
+                                        }
+                                        appearance Appearance{
+                                          material Material{ diffuseColor 0.4 0.4 0.4 }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                  Transform {
+                                    translation 0.03 0 -0.055
+                                    rotation 1 0 0 0
+                                    children[
+                                      Shape{
+                                        geometry Box{ size 0.13 0.06 0.05}
+                                        appearance Appearance{
+                                          material Material{ diffuseColor 0.8 0 0.4 }
+                                        }
+                                      }
+                                    ]
+                                  }
+
+                                ]  #FL_7_Link Segment children 終わり
+                              }  #FL_7_Link Segment 終わり
+                              ]  #FL_7_Link Segment children 終わり
+                            }  #FL_7_Link Segment 終わり
+
+                           ]  #FL_6 children 終わり
+                          }  #FL_6 終わり
+
+                      ]  #FL_5 children 終わり
+                      }  #FL_5 終わり
+
+                  ]  #FL_4 children 終わり
+                  }  #FL_4 終わり
+
+                ] #FL_3 children 終わり
+              } #FL_3 終わり
+
+            ] #FL_2_Link children終わり
+          } #FL_2 終わり
+
+    ] #FL_1 children終わり
+    } #FL_1 終わり
+
+    DEF FR_1 Joint{ #肩甲骨. y軸周りに回転する
+      jointType "rotate"
+      jointId 18
+      jointAxis 0.0 1.0 0.0
+      translation 0 -0.15 0
+      children[
+        DEF FR_1_Link Segment{
+          centerOfMass 0.0 0.0 0.0
+          mass 2.2
+          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+          children[
+            Transform {
+              translation 0 0.05 0
+              rotation 0 1 0 0
+              children[
+                Shape{
+                  geometry Cylinder{
+                    radius 0.05
+                    height 0.1
+                  }
+                  appearance Appearance{
+                    material Material{ diffuseColor 0.8 0.8 0.8 }
+                  }
+                }
+              ]
+            }
+          ]
+        } #FR_1_Link Segment 終わり
+
+        DEF FR_2 Joint { #肩甲骨. x軸周りに回転する
+          jointType "rotate"
+          jointId 19
+          jointAxis 1.0 0.0 0.0
+          translation 0 0 0
+          rotation 0 1 0 0
+          children[
+            DEF FR_2_Link Segment{
+              centerOfMass 0.0 0.0 0.0
+              mass 0.8
+              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+              children[
+                Transform {
+                  rotation 0 0 1 1.5708
+                  children[
+                    Shape{
+                      geometry Cylinder{
+                        radius 0.05
+                        height 0.1
+                      }
+                      appearance Appearance{
+                        material Material{ diffuseColor 0.8 0.8 0.8 }
+                      }
+                    }
+                  ]
+                }
+              ] #FR_2_Link Segment children 終わり
+            } #FR_2_Link Segment 終わり
+
+          DEF FR_3 Joint { #z軸方向に回転させるための関節
+            jointType "rotate"
+            jointId 20
+            jointAxis 0.0 0.0 1.0
+            translation 0 0 -0.05
+              children[
+                DEF FR_3_Link Segment{
+                  centerOfMass 0.0 0.0 0.0
+                  mass 0.0863
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      rotation 1 0 0 1.5708
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.04
+                            height 0.01
+                          }
+                          appearance Appearance{
+                            material Material{ diffuseColor 0.4 0.4 0.4 }
+                          }
+                        }
+                      ]
+                    }
+                  ]  #FL_3_Link Segment children 終わり
+                }  #FL_3_Link Segment 終わり
+
+              DEF FR_4 Joint { #上腕骨.
+              jointType "rotate" #固定（自由度なし）．
+              jointAxis 0 1 0
+                jointId 21
+                translation 0 0 -0.06
+                children[
+                  DEF FR_4_Link Segment{
+                    centerOfMass 0.0 0.0 0.0
+                    mass 0.086
+                    momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                    children[
+                      Transform {
+                        rotation 1 0 0 1.5708
+                        children[
+                          Shape{
+                            geometry Cylinder{
+                              radius 0.03
+                              height 0.11
+                            }
+                            appearance Appearance{
+                              material Material{ diffuseColor 0.8 0.8 0.8 }
+                            }
+                          }
+                        ]
+                      }
+                    ]  #FL_4_Link Segment children 終わり
+                  }  #FL_4_Link Segment 終わり
+
+                  DEF FR_5 Joint { #前足の肘に当たる関節。x軸方向に回転
+                    jointType "rotate"
+                    jointId 22
+                    jointAxis 0 1 0
+                    translation 0 0 -0.055
+                    children[
+                      DEF FR_5_Link Segment{
+                        centerOfMass 0.0 0.0 0.0
+                        mass 0.086
+                        momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                        children[
+                          Transform {
+                            rotation 1 0 0 0
+                            children[
+                              Shape{
+                                geometry Cylinder{
+                                  radius 0.03
+                                  height 0.08
+                                }
+                                appearance Appearance{
+                                  material Material{ diffuseColor 0.4 0.4 0.4 }
+                                }
+                              }
+                            ]
+                          }
+                        ]  #FL_5_Link Segment children 終わり
+                      }  #FL_5_Link Segment 終わり
+
+                      DEF FR_6 Joint { #尺骨
+                      jointType "rotate" #固定（自由度なし）．
+                      jointAxis 0 1 0
+                        jointId 23
+                        translation 0 0 -0.0725
+                        rotation 0 1 0 0
+                        children[
+                          DEF FR_6_Link Segment{
+                            centerOfMass 0.0 0.0 0.0
+                            mass 0.086
+                            momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                            children[
+                              Transform {
+                                rotation 1 0 0 1.5708
+                                children[
+                                  Shape{
+                                    geometry Cylinder{
+                                      radius 0.03
+                                      height 0.145
+                                    }
+                                    appearance Appearance{
+                                      material Material{ diffuseColor 0.8 0.8 0.8 }
+                                    }
+                                  }
+                                ]
+                              }
+                            ]  #FR_6_Link Segment children 終わり
+                          }  #FR_6_Link Segment 終わり
+
+                        DEF FR_7 Joint { #前足首に当たる関節。x軸方向に回転
+                          jointType "rotate"
+                          jointId 24
+                          jointAxis 0 1 0
+                          translation 0 0 -0.0875
+                          children[
+                            DEF FR_7_Link Segment{
+                              centerOfMass 0.0 0.0 0.0
+                              mass 0.086
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 0
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.08
+                                      }
+                                      appearance Appearance{
+                                        material Material{ diffuseColor 0.4 0.4 0.4 }
+                                      }
+                                    }
+                                  ]
+                                }
+                                Transform {
+                                  translation 0.03 0 -0.055
+                                  rotation 1 0 0 0
+                                  children[
+                                    Shape{
+                                      geometry Box{ size 0.13 0.06 0.05}
+                                      appearance Appearance{
+                                        material Material{ diffuseColor 0.8 0 0.4 }
+                                      }
+                                    }
+                                  ]
+                                }
+
+                              ]  #FR_7_Link Segment children 終わり
+                            }  #FR_7_Link Segment 終わり
+                           ]  #FR_7_Link Segment children 終わり
+                          }  #FR_7_Link Segment 終わり
+
+                         ]  #FR_6 children 終わり
+                        }  #FR_6 終わり
+
+                    ]  #FR_5 children 終わり
+                    }  #FR_5 終わり
+
+                ]  #FR_4 children 終わり
+                }  #FR_4 終わり
+
+              ] #FR_3 children 終わり
+            } #FR_3 終わり
+
+          ] #FR_2_Link children終わり
+        } #FR_2 終わり
+
+    ] #FR_1 children終わり
+    } #FR_1 終わり
+
+    ] #shoulder_children終わり
+  } #shoulder 終わり
+
+  DEF RL_1 Joint{ #左後ろ足肩甲骨. y軸周りに回転する
+    jointType "rotate"
+    jointId 25
+    jointAxis 0.0 1.0 0.0
+    translation 0 0.05 0
+    children[
+      DEF RL_1_Link Segment{
+        centerOfMass 0.0 0.0 0.0
+        mass 2.2
+        momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+        children[
+          Transform {
+            translation 0 0.05 0
+            rotation 0 1 0 0
+            children[
+              Shape{
+                geometry Cylinder{
+                  radius 0.05
+                  height 0.1
+                }
+                appearance Appearance{
+                  material Material{ diffuseColor 0.8 0.8 0.8 }
+                }
+              }
+            ]
+          }
+        ] #RL_1_Link children 終わり
+      } #RL_1_Link Segment 終わり
+
+      DEF RL_2 Joint { #肩甲骨. x軸周りに回転する
+        jointType "rotate"
+        jointId 26
+        jointAxis 1.0 0.0 0.0
+        translation 0 0.1 0
+        rotation 0 1 0 0
+        children[
+          DEF RL_2_Link Segment{
+            centerOfMass 0.0 0.0 0.0
+            mass 0.8
+            momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+            children[
+              Transform {
+                rotation 0 0 1 1.5708
+                children[
+                  Shape{
+                    geometry Cylinder{
+                      radius 0.05
+                      height 0.1
+                    }
+                    appearance Appearance{
+                      material Material{ diffuseColor 0.8 0.8 0.8 }
+                    }
+                  }
+                ]
+              }
+            ] #FR_2_Link Segment children 終わり
+          } #FR_2_Link Segment 終わり
+
+          DEF RL_3 Joint { #z軸方向に回転させるための関節
+            jointType "rotate"
+            jointId 27
+            jointAxis 0.0 0.0 1.0
+            translation 0 0 -0.05
+            children[
+              DEF RL_3_Link Segment{
+                centerOfMass 0.0 0.0 0.0
+                mass 0.0863
+                momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                children[
+                  Transform {
+                    rotation 1 0 0 1.5708
+                    children[
+                      Shape{
+                        geometry Cylinder{
+                          radius 0.04
+                          height 0.01
+                        }
+                        appearance Appearance{
+                          material Material{ diffuseColor 0.4 0.4 0.4 }
+                        }
+                      }
+                    ]
+                  }
+                ]  #RL_3_Link Segment children 終わり
+              }  #RL_3_Link Segment 終わり
+
+            DEF RL_4 Joint { #腸骨
+            jointType "rotate" #固定（自由度なし）．
+            jointAxis 0 1 0
+              jointId 28
+              translation 0 0 -0.05
+              children[
+                DEF RL_4_Link Segment{
+                  centerOfMass 0.0 0.0 0.0
+                  mass 0.0863
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      rotation 1 0 0 1.5708
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.03
+                            height 0.08
+                          }
+                          appearance Appearance{
+                            material Material{ diffuseColor 0.8 0.8 0.8 }
+                          }
+                        }
+                      ]
+                    }
+                  ]  #RL_4_Link Segment children 終わり
+                }  #RL_4_Link Segment 終わり
+
+                DEF RL_5 Joint { #後ろ足の肘に当たる関節。x軸方向に回転
+                  jointType "rotate"
+                  jointId 29
+                  jointAxis 0 1 0
+                  translation 0 0 -0.04
+                  children[
+                    DEF RL_5_Link Segment{
+                      centerOfMass 0.0 0.0 0.0
+                      mass 0.086
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          rotation 1 0 0 0
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.03
+                                height 0.08
+                              }
+                              appearance Appearance{
+                                material Material{ diffuseColor 0.4 0.4 0.4 }
+                              }
+                            }
+                          ]
+                        }
+                      ]  #RL_5_Link Segment children 終わり
+                    }  #RL_5_Link Segment 終わり
+
+                    DEF RL_6 Joint { #大腿骨
+                    jointType "rotate" #固定（自由度なし）．
+                    jointAxis 0 1 0
+                      jointId 30
+                      translation 0 0 -0.065
+                      rotation 0 1 0 0
+                      children[
+                        DEF RL_6_Link Segment{
+                          centerOfMass 0.0 0.0 0.0
+                          mass 0.086
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.03
+                                    height 0.13
+                                  }
+                                  appearance Appearance{
+                                    material Material{ diffuseColor 0.4 0.6 0.8 }
+                                  }
+                                }
+                              ]
+                            }
+                          ]  #FL_6_Link Segment children 終わり
+                        }  #FL_6_Link Segment 終わり
+
+                        DEF RL_7 Joint { #前足の肘に当たる関節。x軸方向に回転
+                          jointType "rotate"
+                          jointId 31
+                          jointAxis 0 1 0
+                          translation 0 0 -0.065
+                          children[
+                            DEF RL_7_Link Segment{
+                              centerOfMass 0.0 0.0 0.0
+                              mass 0.086
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 0
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.08
+                                      }
+                                      appearance Appearance{
+                                        material Material{ diffuseColor 0.4 0.4 0.4 }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]  #FL_7_Link Segment children 終わり
+                            }  #FL_7_Link Segment 終わり
+
+                            DEF RL_8 Joint { #脛骨
+                            jointType "rotate" #固定（自由度なし）．
+                            jointAxis 0 1 0
+                              jointId 32
+                              translation 0 0 -0.065
+                              rotation 0 1 0 0
+                              children[
+                                DEF RL_8_Link Segment{
+                                  centerOfMass 0.0 0.0 0.0
+                                  mass 0.086
+                                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                  children[
+                                    Transform {
+                                      rotation 1 0 0 1.5708
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.13
+                                          }
+                                          appearance Appearance{
+                                            material Material{ diffuseColor 0.8 0.8 0.8 }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]  #FL_8_Link Segment children 終わり
+                                }  #FL_8_Link Segment 終わり
+
+                                DEF RL_9 Joint { #前足の肘に当たる関節。x軸方向に回転
+                                  jointType "rotate"
+                                  jointId 33
+                                  jointAxis 0 1 0
+                                  translation 0 0 -0.065
+                                  children[
+                                    DEF RL_9_Link Segment{
+                                      centerOfMass 0.0 0.0 0.0
+                                      mass 0.086
+                                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                      children[
+                                        Transform {
+                                          rotation 1 0 0 0
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.08
+                                              }
+                                              appearance Appearance{
+                                                material Material{ diffuseColor 0.4 0.4 0.4 }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        Transform {
+                                          translation 0 0 -0.045
+                                          rotation 1 0 0 1.5708
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.09
+                                              }
+                                              appearance Appearance{
+                                                material Material{ diffuseColor 0.8 0.8 0.8 }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]  #FL_9_Link Segment children 終わり
+                                    }  #FL_9_Link Segment 終わり
+
+                                    DEF RL_10 Joint { #前足首に当たる関節。x軸方向に回転
+                                      jointType "rotate"
+                                      jointId 34
+                                      jointAxis 0 1 0
+                                      translation 0 0 -0.09
+                                      children[
+                                        DEF RL_10_Link Segment{
+                                          centerOfMass 0.0 0.0 0.0
+                                          mass 0.086
+                                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                          children[
+                                            Transform { #足首の関節
+                                              rotation 1 0 0 0
+                                              children[
+                                                Shape{
+                                                  geometry Cylinder{
+                                                    radius 0.03
+                                                    height 0.08
+                                                  }
+                                                  appearance Appearance{
+                                                    material Material{ diffuseColor 0.4 0.4 0.4 }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                            Transform { #足先
+                                              translation 0.03 0 -0.055
+                                              rotation 1 0 0 0
+                                              children[
+                                                Shape{
+                                                  geometry Box{ size 0.13 0.06 0.05}
+                                                  appearance Appearance{
+                                                    material Material{ diffuseColor 0.8 0 0.4 }
+                                                  }
+                                                }
+                                              ]
+                                            }
+
+                                          ]  #RL_10_Link Segment children 終わり
+                                        }  #RL_10_Link Segment 終わり
+
+                                       ]  #RL_10 children 終わり
+                                      }  #RL_10 終わり
+                                  ] #RL_9 children 終わり
+                                } #RL_9 終わり
+                              ] #RL_8 children 終わり
+                            } #RL_8 終わり
+
+                          ] #RL_7 children 終わり
+                        } #RL_7 終わり
+                      ] #RL_6 children 終わり
+                    } #RL_6 終わり
+
+                    ] #RL_5 children 終わり
+                  } #RL_5 終わり
+
+              ] #RL_4 children 終わり
+            } #RL_4 終わり
+
+            ] #RL_3 children 終わり
+          } #RL_3 終わり
+
+        ] #FR_2 children 終わり
+      } #FR_2 終わり
+
+    ] #RL_1 children 終わり
+   } #RL_1 終わり
+
+  DEF RR_1 Joint{ #左後ろ足肩甲骨. y軸周りに回転する
+     jointType "rotate"
+     jointId 35
+     jointAxis 0.0 1.0 0.0
+     translation 0 -0.05 0
+     children[
+       DEF RR_1_Link Segment{
+         centerOfMass 0.0 0.0 0.0
+         mass 2.2
+         momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+         children[
+           Transform {
+             translation 0 -0.05 0
+             rotation 0 1 0 0
+             children[
+               Shape{
+                 geometry Cylinder{
+                   radius 0.05
+                   height 0.1
+                 }
+                 appearance Appearance{
+                   material Material{ diffuseColor 0.8 0.8 0.8 }
+                 }
+               }
+             ]
+           }
+         ] #RR_1_Link children 終わり
+       } #RR_1_Link Segment 終わり
+
+       DEF RR_2 Joint { #肩甲骨. x軸周りに回転する
+         jointType "rotate"
+         jointId 36
+         jointAxis 1.0 0.0 0.0
+         translation 0 -0.1 0
+         rotation 0 1 0 0
+         children[
+           DEF RR_2_Link Segment{
+             centerOfMass 0.0 0.0 0.0
+             mass 0.8
+             momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+             children[
+               Transform {
+                 rotation 0 0 1 1.5708
+                 children[
+                   Shape{
+                     geometry Cylinder{
+                       radius 0.05
+                       height 0.1
+                     }
+                     appearance Appearance{
+                       material Material{ diffuseColor 0.8 0.8 0.8 }
+                     }
+                   }
+                 ]
+               }
+             ] #RR_2_Link Segment children 終わり
+           } #RR_2_Link Segment 終わり
+
+           DEF RR_3 Joint { #z軸方向に回転させるための関節
+             jointType "rotate"
+             jointId 37
+             jointAxis 0.0 0.0 1.0
+             translation 0 0 -0.05
+             children[
+               DEF RR_3_Link Segment{
+                 centerOfMass 0.0 0.0 0.0
+                 mass 0.0863
+                 momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                 children[
+                   Transform {
+                     rotation 1 0 0 1.5708
+                     children[
+                       Shape{
+                         geometry Cylinder{
+                           radius 0.04
+                           height 0.01
+                         }
+                         appearance Appearance{
+                           material Material{ diffuseColor 0.4 0.4 0.4 }
+                         }
+                       }
+                     ]
+                   }
+                 ]  #RR_3_Link Segment children 終わり
+               }  #RR_3_Link Segment 終わり
+
+             DEF RR_4 Joint { #腸骨
+             jointType "rotate" #固定（自由度なし）．
+             jointAxis 0 1 0
+               jointId 38
+               translation 0 0 -0.05
+               children[
+                 DEF RR_4_Link Segment{
+                   centerOfMass 0.0 0.0 0.0
+                   mass 0.0863
+                   momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                   children[
+                     Transform {
+                       rotation 1 0 0 1.5708
+                       children[
+                         Shape{
+                           geometry Cylinder{
+                             radius 0.03
+                             height 0.08
+                           }
+                           appearance Appearance{
+                             material Material{ diffuseColor 0.8 0.8 0.8 }
+                           }
+                         }
+                       ]
+                     }
+                   ]  #RR_4_Link Segment children 終わり
+                 }  #RR_4_Link Segment 終わり
+
+                 DEF RR_5 Joint { #後ろ足の肘に当たる関節。x軸方向に回転
+                   jointType "rotate"
+                   jointId 39
+                   jointAxis 0 1 0
+                   translation 0 0 -0.04
+                   children[
+                     DEF RR_5_Link Segment{
+                       centerOfMass 0.0 0.0 0.0
+                       mass 0.086
+                       momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                       children[
+                         Transform {
+                           rotation 1 0 0 0
+                           children[
+                             Shape{
+                               geometry Cylinder{
+                                 radius 0.03
+                                 height 0.08
+                               }
+                               appearance Appearance{
+                                 material Material{ diffuseColor 0.4 0.4 0.4 }
+                               }
+                             }
+                           ]
+                         }
+                       ]  #RR_5_Link Segment children 終わり
+                     }  #RR_5_Link Segment 終わり
+
+                     DEF RR_6 Joint { #大腿骨
+                     jointType "rotate" #固定（自由度なし）．
+                     jointAxis 0 1 0
+                       jointId 40
+                       translation 0 0 -0.065
+                       rotation 0 1 0 0
+                       children[
+                         DEF RR_6_Link Segment{
+                           centerOfMass 0.0 0.0 0.0
+                           mass 0.086
+                           momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                           children[
+                             Transform {
+                               rotation 1 0 0 1.5708
+                               children[
+                                 Shape{
+                                   geometry Cylinder{
+                                     radius 0.03
+                                     height 0.13
+                                   }
+                                   appearance Appearance{
+                                     material Material{ diffuseColor 0.4 0.6 0.8 }
+                                   }
+                                 }
+                               ]
+                             }
+                           ]  #RR_6_Link Segment children 終わり
+                         }  #RR_6_Link Segment 終わり
+
+                         DEF RR_7 Joint { #前足の肘に当たる関節。x軸方向に回転
+                           jointType "rotate"
+                           jointId 41
+                           jointAxis 0 1 0
+                           translation 0 0 -0.065
+                           children[
+                             DEF RR_7_Link Segment{
+                               centerOfMass 0.0 0.0 0.0
+                               mass 0.086
+                               momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                               children[
+                                 Transform {
+                                   rotation 1 0 0 0
+                                   children[
+                                     Shape{
+                                       geometry Cylinder{
+                                         radius 0.03
+                                         height 0.08
+                                       }
+                                       appearance Appearance{
+                                         material Material{ diffuseColor 0.4 0.4 0.4 }
+                                       }
+                                     }
+                                   ]
+                                 }
+                               ]  #RR_7_Link Segment children 終わり
+                             }  #RR_7_Link Segment 終わり
+
+                             DEF RR_8 Joint { #脛骨
+                             jointType "rotate" #固定（自由度なし）．
+                             jointAxis 0 1 0
+                               jointId 42
+                               translation 0 0 -0.065
+                               rotation 0 1 0 0
+                               children[
+                                 DEF RR_8_Link Segment{
+                                   centerOfMass 0.0 0.0 0.0
+                                   mass 0.086
+                                   momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                   children[
+                                     Transform {
+                                       rotation 1 0 0 1.5708
+                                       children[
+                                         Shape{
+                                           geometry Cylinder{
+                                             radius 0.03
+                                             height 0.13
+                                           }
+                                           appearance Appearance{
+                                             material Material{ diffuseColor 0.8 0.8 0.8 }
+                                           }
+                                         }
+                                       ]
+                                     }
+                                   ]  #RR_8_Link Segment children 終わり
+                                 }  #RR_8_Link Segment 終わり
+
+                                 DEF RR_9 Joint { #前足の肘に当たる関節。x軸方向に回転
+                                   jointType "rotate"
+                                   jointId 43
+                                   jointAxis 0 1 0
+                                   translation 0 0 -0.065
+                                   children[
+                                     DEF RR_9_Link Segment{
+                                       centerOfMass 0.0 0.0 0.0
+                                       mass 0.086
+                                       momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                       children[
+                                         Transform {
+                                           rotation 1 0 0 0
+                                           children[
+                                             Shape{
+                                               geometry Cylinder{
+                                                 radius 0.03
+                                                 height 0.08
+                                               }
+                                               appearance Appearance{
+                                                 material Material{ diffuseColor 0.4 0.4 0.4 }
+                                               }
+                                             }
+                                           ]
+                                         }
+                                         Transform {
+                                           translation 0 0 -0.045
+                                           rotation 1 0 0 1.5708
+                                           children[
+                                             Shape{
+                                               geometry Cylinder{
+                                                 radius 0.03
+                                                 height 0.09
+                                               }
+                                               appearance Appearance{
+                                                 material Material{ diffuseColor 0.8 0.8 0.8 }
+                                               }
+                                             }
+                                           ]
+                                         }
+                                       ]  #RR_9_Link Segment children 終わり
+                                     }  #RR_9_Link Segment 終わり
+
+                                     DEF RR_10 Joint { #前足首に当たる関節。x軸方向に回転
+                                       jointType "rotate"
+                                       jointId 44
+                                       jointAxis 0 1 0
+                                       translation 0 0 -0.09
+                                       children[
+                                         DEF RR_10_Link Segment{
+                                           centerOfMass 0.0 0.0 0.0
+                                           mass 0.086
+                                           momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                           children[
+                                             Transform { #足首の関節
+                                               rotation 1 0 0 0
+                                               children[
+                                                 Shape{
+                                                   geometry Cylinder{
+                                                     radius 0.03
+                                                     height 0.08
+                                                   }
+                                                   appearance Appearance{
+                                                     material Material{ diffuseColor 0.4 0.4 0.4 }
+                                                   }
+                                                 }
+                                               ]
+                                             }
+                                             Transform { #足先
+                                               translation 0.03 0 -0.055
+                                               rotation 1 0 0 0
+                                               children[
+                                                 Shape{
+                                                   geometry Box{ size 0.13 0.06 0.05}
+                                                   appearance Appearance{
+                                                     material Material{ diffuseColor 0.8 0 0.4 }
+                                                   }
+                                                 }
+                                               ]
+                                             }
+
+                                           ]  #RR_10_Link Segment children 終わり
+                                         }  #RR_10_Link Segment 終わり
+
+                                        ]  #RR_10 children 終わり
+                                       }  #RR_10 終わり
+                                   ] #RR_9 children 終わり
+                                 } #RR_9 終わり
+                               ] #RR_8 children 終わり
+                             } #RR_8 終わり
+
+                           ] #RR_7 children 終わり
+                         } #RR_7 終わり
+                       ] #RR_6 children 終わり
+                     } #RR_6 終わり
+
+                     ] #RR_5 children 終わり
+                   } #RR_5 終わり
+
+               ] #RR_4 children 終わり
+             } #RR_4 終わり
+
+             ] #RR_3 children 終わり
+           } #RR_3 終わり
+
+         ] #RR_2 children 終わり
+       } #RR_2 終わり
+
+     ] #RR_1 children 終わり
+    } #RR_1 終わり
+
+  ] #rootjointのchildren終わり．
+
+
+  } #rootjoint終わり
+ ] #HumanoidBody終わり
+
+  joints [
+    USE root,
+    USE SPINE_1,
+    USE SPINE_2,
+    USE SPINE_3,
+    USE SPINE_4,
+    USE SPINE_5,
+    USE SPINE_6,
+    USE SPINE_7,
+    USE SPINE_8,
+    USE SPINE_9,
+    USE SPINE_10,
+    USE SHOULDER,
+    USE FL_1,
+    USE FL_2,
+    USE FL_3,
+    USE FL_4,
+    USE FL_5,
+    USE FL_6,
+    USE FL_7,
+    USE FR_1,
+    USE FR_2,
+    USE FR_3,
+    USE FR_4,
+    USE FR_5,
+    USE FR_6,
+    USE FR_7,
+
+    USE RL_1,
+    USE RL_2,
+    USE RL_3,
+    USE RL_4,
+    USE RL_5,
+    USE RL_6,
+    USE RL_7,
+    USE RL_8,
+    USE RL_9,
+    USE RL_10,
+    USE RR_1,
+    USE RR_2,
+    USE RR_3,
+    USE RR_4,
+    USE RR_5,
+    USE RR_6,
+    USE RR_7,
+    USE RR_8,
+    USE RR_9,
+    USE RR_10,
+  ]
+  segments [
+    USE root_Link,
+    USE SPINE_1_Link,
+    USE SPINE_2_Link,
+    USE SPINE_3_Link,
+    USE SPINE_4_Link,
+    USE SPINE_5_Link,
+    USE SPINE_6_Link,
+    USE SPINE_7_Link,
+    USE SPINE_8_Link,
+    USE SPINE_9_Link,
+    USE SPINE_10_Link,
+    USE SHOULDER_Link,
+    USE FL_1_Link,
+    USE FL_2_Link,
+    USE FL_3_Link,
+    USE FL_4_Link,
+    USE FL_5_Link,
+    USE FL_6_Link,
+    USE FL_7_Link,
+    USE FR_1_Link,
+    USE FR_2_Link,
+    USE FR_3_Link,
+    USE FR_4_Link,
+    USE FR_5_Link,
+    USE FR_6_Link,
+    USE FR_7_Link,
+    USE RL_1_Link,
+    USE RL_2_Link,
+    USE RL_3_Link,
+    USE RL_4_Link,
+    USE RL_5_Link,
+    USE RL_6_Link,
+    USE RL_7_Link,
+    USE RL_8_Link,
+    USE RL_9_Link,
+    USE RL_10_Link,
+    USE RR_1_Link,
+    USE RR_2_Link,
+    USE RR_3_Link,
+    USE RR_4_Link,
+    USE RR_5_Link,
+    USE RR_6_Link,
+    USE RR_7_Link,
+    USE RR_8_Link,
+    USE RR_9_Link,
+    USE RR_10_Link,
+
+
+
+
+  ]
+}

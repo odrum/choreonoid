@@ -1,0 +1,1363 @@
+#VRML V2.0 utf8
+
+PROTO Joint [
+  exposedField     SFVec3f      center              0 0 0
+  exposedField     MFNode       children            []
+  exposedField     MFFloat      llimit              []
+  exposedField     MFFloat      lvlimit             []
+  exposedField     SFRotation   limitOrientation    0 0 1 0
+  exposedField     SFString     name                ""
+  exposedField     SFRotation   rotation            0 0 1 0
+  exposedField     SFVec3f      scale               1 1 1
+  exposedField     SFRotation   scaleOrientation    0 0 1 0
+  exposedField     MFFloat      stiffness           [ 0 0 0 ]
+  exposedField     SFVec3f      translation         0 0 0
+  exposedField     MFFloat      ulimit              []
+  exposedField     MFFloat      uvlimit             []
+  exposedField     SFString     jointType           ""
+  exposedField     SFInt32      jointId             -1
+  exposedField     SFVec3f      jointAxis           0 0 1
+
+  exposedField     SFFloat      gearRatio           1
+  exposedField     SFFloat      rotorInertia        0
+  exposedField     SFFloat      rotorResistor       0
+  exposedField     SFFloat      torqueConst         1
+  exposedField     SFFloat      encoderPulse        1
+]
+{
+  Transform {
+    center           IS center
+    children         IS children
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+  }
+}
+
+PROTO Segment [
+  field           SFVec3f     bboxCenter        0 0 0
+  field           SFVec3f     bboxSize          -1 -1 -1
+  exposedField    SFVec3f     centerOfMass      0 0 0
+  exposedField    MFNode      children          [ ]
+  exposedField    SFNode      coord             NULL
+  exposedField    MFNode      displacers        [ ]
+  exposedField    SFFloat     mass              0
+  exposedField    MFFloat     momentsOfInertia  [ 0 0 0 0 0 0 0 0 0 ]
+  exposedField    SFString    name              ""
+  eventIn         MFNode      addChildren
+  eventIn         MFNode      removeChildren
+]
+{
+  Group {
+    addChildren    IS addChildren
+    bboxCenter     IS bboxCenter
+    bboxSize       IS bboxSize
+    children       IS children
+    removeChildren IS removeChildren
+  }
+}
+
+PROTO Humanoid [
+  field           SFVec3f    bboxCenter            0 0 0
+  field           SFVec3f    bboxSize              -1 -1 -1
+  exposedField    SFVec3f    center                0 0 0
+  exposedField    MFNode     humanoidBody          [ ]
+  exposedField    MFString   info                  [ ]
+  exposedField    MFNode     joints                [ ]
+  exposedField    SFString   name                  ""
+  exposedField    SFRotation rotation              0 0 1 0
+  exposedField    SFVec3f    scale                 1 1 1
+  exposedField    SFRotation scaleOrientation      0 0 1 0
+  exposedField    MFNode     segments              [ ]
+  exposedField    MFNode     sites                 [ ]
+  exposedField    SFVec3f    translation           0 0 0
+  exposedField    SFString   version               "1.1"
+  exposedField    MFNode     viewpoints            [ ]
+]
+{
+  Transform {
+    bboxCenter       IS bboxCenter
+    bboxSize         IS bboxSize
+    center           IS center
+    rotation         IS rotation
+    scale            IS scale
+    scaleOrientation IS scaleOrientation
+    translation      IS translation
+    children [
+      Group {
+        children IS viewpoints
+      }
+      Group {
+        children IS humanoidBody
+      }
+    ]
+  }
+}
+
+PROTO VisionSensor [
+  exposedField SFVec3f    translation       0 0 0
+  exposedField SFRotation rotation          0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFFloat    fieldOfView       0.785398
+  exposedField SFString   name              ""
+  exposedField SFFloat    frontClipDistance 0.01
+  exposedField SFFloat    backClipDistance  10.0
+  exposedField SFString   type              "NONE"
+  exposedField SFInt32    sensorId          -1
+  exposedField SFInt32    width             320
+  exposedField SFInt32    height            240
+  exposedField SFFloat    frameRate         30
+]
+{
+  Transform {
+    rotation         IS rotation
+    translation      IS translation
+    children         IS children
+  }
+}
+
+
+PROTO ForceSensor [
+  exposedField SFVec3f    maxForce    -1 -1 -1
+  exposedField SFVec3f    maxTorque   -1 -1 -1
+  exposedField SFVec3f    translation 0 0 0
+  exposedField SFRotation rotation    0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId    -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Gyro [
+  exposedField SFVec3f    maxAngularVelocity -1 -1 -1
+  exposedField SFVec3f    translation        0 0 0
+  exposedField SFRotation rotation           0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId           -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO AccelerationSensor [
+  exposedField SFVec3f    maxAcceleration -1 -1 -1
+  exposedField SFVec3f    translation     0 0 0
+  exposedField SFRotation rotation        0 0 1 0
+  exposedField MFNode     children          [ ]
+  exposedField SFInt32    sensorId        -1
+]
+{
+  Transform {
+    translation IS translation
+    rotation    IS rotation
+    children    IS children
+  }
+}
+
+PROTO Plane [
+  exposedField SFVec3f size 10 10 0
+]
+{
+  Box {
+    size IS size
+  }
+}
+NavigationInfo {
+  avatarSize    0.5
+  headlight     TRUE
+  type  ["EXAMINE", "ANY"]
+}
+
+Background {
+  skyColor 0.4 0.6 0.4
+}
+
+Viewpoint {
+  position    3 0 0.835
+  orientation 0.5770 0.5775 0.5775 2.0935
+}
+
+DEF mymodel4kjump2_12_sencerplus Humanoid{
+  humanoidBody [
+    DEF root Joint {
+      jointType "free"
+      translation 0 0 0.8
+      children[
+        DEF acc AccelerationSensor {
+          sensorId 0
+          maxAcceleration 1000.0 1000.0 1000.0
+        }
+        DEF gyro Gyro {
+          sensorId 0
+          maxAngularVelocity 100.0 100.0 100.0
+        }
+        DEF root_Link Segment{
+          centerOfMass 0.0 0.0 0.0
+          mass 0.5
+          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+          children[
+            Transform {
+              rotation 0 1 0 0
+              children[
+                Shape{
+                  geometry Box{
+                    size 0.05 0.2 0.1
+                  }
+                  appearance Appearance{
+                    material Material{
+                      diffuseColor 0.8 0.8 0.8
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        DEF CHEST Joint {
+          jointType "fixed"
+          jointId 0
+          translation 0.075 0 0
+          children[
+            DEF CHEST_Link Segment{
+              centerOfMass 0.0 0.02500000000000001 0.0
+              mass 1.5
+              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+              children[
+                Transform {
+                  rotation 0 1 0 0
+                  children[
+                    Shape{
+                      geometry Cylinder{
+                        radius 0.05
+                        height 0.2
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.4 0.8 0.4
+                        }
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation 0.075 0 0
+                  rotation 0 1 0 0
+                  children[
+                    Shape{
+                      geometry Box{
+                        size 0.05 0.2 0.1
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.8 0.8 0.8
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF SHOULDER Joint {
+              jointType "fixed"
+              jointId 1
+              translation 0.15 0 0
+              children[
+                DEF SHOULDER_Link Segment{
+                  centerOfMass 0.05000000000000002 0.0 0.0
+                  mass 1.0
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      rotation 1 0 0 1.5708
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.05
+                            height 0.1
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                    Transform {
+                      translation 0.1 0 0
+                      rotation 0 1 0 0
+                      children[
+                        Shape{
+                          geometry Box{
+                            size 0.1 0.1 0.1
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF FL_1 Joint {
+                  jointType "rotate"
+                  jointId 2
+                  jointAxis 0.0 1.0 0.0
+                  translation 0.1 0.05 0
+                  children[
+                    DEF FL_1_Link Segment{
+                      centerOfMass 0.0 0.05000000000000002 0.0
+                      mass 2.2
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          translation 0 0.05 0
+                          rotation 0 1 0 0
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.05
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF FL_2 Joint {
+                      jointType "rotate"
+                      jointId 3
+                      jointAxis 1.0 0.0 0.0
+                      translation 0 0.1 0
+                      children[
+                        DEF FL_2_Link Segment{
+                          centerOfMass 0.0 0.0 0.0
+                          mass 0.8
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 0 0 1 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.05
+                                    height 0.1
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF FL_3 Joint {
+                          jointType "fixed"
+                          jointId 4
+                          translation 0 0 -0.05
+                          children[
+                            DEF FL_3_Link Segment{
+                              centerOfMass 0.0 0.0 -0.025000000000000012
+                              mass 0.08630000000000003
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.04
+                                        height 0.05
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.4 0.4 0.4
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                                Transform {
+                                  translation 0 0 -0.0625
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.075
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF FL_4 Joint {
+                              jointType "rotate"
+                              jointId 5
+                              jointAxis 0.0 1.0 0.0
+                              translation 0 0 -0.1
+                              children[
+                                DEF FL_4_Link Segment{
+                                  centerOfMass 0.0 0.0 -0.1
+                                  mass 2.314999999999999
+                                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                  children[
+                                    Transform {
+                                      rotation 0 1 0 0
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.1
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                    Transform {
+                                      translation 0 0 -0.1
+                                      rotation 1 0 0 1.5708
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.2
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF FL_5 Joint {
+                                  jointType "rotate"
+                                  jointId 6
+                                  jointAxis 0.0 1.0 0.0
+                                  translation 0 0 -0.2
+                                  children[
+                                    DEF force1 ForceSensor {
+                                      sensorId 0
+                                      translation 0 0 -0.08
+                                      maxForce 10000.0 10000.0 10000.0
+                                      maxTorque 10000.0 10000.0 10000.0
+                                    }
+                                    DEF FL_5_Link Segment{
+                                      centerOfMass 0.05000000000000002 0.0 -0.055000000000000014
+                                      mass 1.07
+                                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                      children[
+                                        Transform {
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        Transform {
+                                          translation 0.05 0 -0.055
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Box{
+                                                size 0.2 0.1 0.05
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.4
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF FR_1 Joint {
+                  jointType "rotate"
+                  jointId 7
+                  jointAxis 0.0 1.0 0.0
+                  translation 0.1 -0.05 0
+                  children[
+                    DEF FR_1_Link Segment{
+                      centerOfMass 0.0 -0.05000000000000002 0.0
+                      mass 2.2
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          translation 0 -0.05 0
+                          rotation 0 1 0 0
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.05
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF FR_2 Joint {
+                      jointType "rotate"
+                      jointId 8
+                      jointAxis 1.0 0.0 0.0
+                      translation 0 -0.1 0
+                      children[
+                        DEF FR_2_Link Segment{
+                          centerOfMass 0.0 0.0 0.0
+                          mass 0.8
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 0 0 1 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.05
+                                    height 0.1
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF FR_3 Joint {
+                          jointType "fixed"
+                          jointId 9
+                          translation 0 0 -0.05
+                          children[
+                            DEF FR_3_Link Segment{
+                              centerOfMass 0.0 0.0 -0.025000000000000012
+                              mass 0.08630000000000003
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.04
+                                        height 0.05
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.4 0.4 0.4
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                                Transform {
+                                  translation 0 0 -0.0625
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.075
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF FR_4 Joint {
+                              jointType "rotate"
+                              jointId 10
+                              jointAxis 0.0 1.0 0.0
+                              translation 0 0 -0.1
+                              children[
+                                DEF FR_4_Link Segment{
+                                  centerOfMass 0.0 0.0 -0.1
+                                  mass 2.314999999999999
+                                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                  children[
+                                    Transform {
+                                      rotation 0 1 0 0
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.1
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                    Transform {
+                                      translation 0 0 -0.1
+                                      rotation 1 0 0 1.5708
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.2
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF FR_5 Joint {
+                                  jointType "rotate"
+                                  jointId 11
+                                  jointAxis 0.0 1.0 0.0
+                                  translation 0 0 -0.2
+                                  children[
+                                    DEF force2 ForceSensor {
+                                      sensorId 1
+                                      translation 0 0 -0.08
+                                      maxForce 10000.0 10000.0 10000.0
+                                      maxTorque 10000.0 10000.0 10000.0
+                                    }
+                                    DEF FR_5_Link Segment{
+                                      centerOfMass 0.05000000000000002 0.0 -0.055000000000000014
+                                      mass 1.07
+                                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                      children[
+                                        Transform {
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        Transform {
+                                          translation 0.05 0 -0.055
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Box{
+                                                size 0.2 0.1 0.05
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.4
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        DEF WAIST Joint {
+          jointType "fixed"
+          jointId 12
+          translation -0.05 0 0
+          children[
+            DEF WAIST_Link Segment{
+              centerOfMass -0.05000000000000002 0.0 0.0
+              mass 1.5
+              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+              children[
+                Transform {
+                  rotation 0 0 1 1.5708
+                  children[
+                    Shape{
+                      geometry Cylinder{
+                        radius 0.05
+                        height 0.05
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.8 0.8 0.8
+                        }
+                      }
+                    }
+                  ]
+                }
+                Transform {
+                  translation -0.075 0 0
+                  rotation 0 1 0 0
+                  children[
+                    Shape{
+                      geometry Box{
+                        size 0.1 0.1 0.1
+                      }
+                      appearance Appearance{
+                        material Material{
+                          diffuseColor 0.8 0.8 0.8
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF RL_1 Joint {
+              jointType "rotate"
+              jointId 13
+              jointAxis 0.0 1.0 0.0
+              translation -0.075 0.05 0
+              children[
+                DEF RL_1_Link Segment{
+                  centerOfMass 0.0 0.05000000000000002 0.0
+                  mass 3.2
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      translation 0 0.05 0
+                      rotation 0 1 0 0
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.05
+                            height 0.1
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF RL_2 Joint {
+                  jointType "rotate"
+                  jointId 14
+                  jointAxis 1.0 0.0 0.0
+                  translation 0 0.1 0
+                  children[
+                    DEF RL_2_Link Segment{
+                      centerOfMass 0.0 0.0 0.0
+                      mass 2.2
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          rotation 0 0 1 1.5708
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.05
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF RL_3 Joint {
+                      jointType "fixed"
+                      jointId 15
+                      translation 0 0 -0.05
+                      children[
+                        DEF RL_3_Link Segment{
+                          centerOfMass 0.0 0.0 -0.015000000000000006
+                          mass 0.10300000000000002
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.05
+                                    height 0.05
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.4 0.4 0.4
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                            Transform {
+                              translation 0 0 -0.0775
+                              rotation 1 0 0 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.04
+                                    height 0.105
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF RL_4 Joint {
+                          jointType "rotate"
+                          jointId 16
+                          jointAxis 0.0 1.0 0.0
+                          translation 0 0 -0.13
+                          children[
+                            DEF RL_4_Link Segment{
+                              centerOfMass 0.0 0.0 -0.1
+                              mass 2.314999999999999
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 0 1 0 0
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.04
+                                        height 0.1
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                                Transform {
+                                  translation 0 0 -0.1
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.2
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.4 0.6 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF RL_5 Joint {
+                              jointType "rotate"
+                              jointId 17
+                              jointAxis 0.0 1.0 0.0
+                              translation 0 0 -0.2
+                              children[
+                                DEF RL_5_Link Segment{
+                                  centerOfMass 0.0 0.0 -0.07500000000000002
+                                  mass 2.2863
+                                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                  children[
+                                    Transform {
+                                      rotation 0 1 0 0
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.1
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                    Transform {
+                                      translation 0 0 -0.075
+                                      rotation 1 0 0 1.5708
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.15
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF RL_6 Joint {
+                                  jointType "rotate"
+                                  jointId 18
+                                  jointAxis 0.0 1.0 0.0
+                                  translation 0 0 -0.15
+                                  children[
+                                    DEF force3 ForceSensor {
+                                      sensorId 2
+                                      translation 0 0 -0.08
+                                      maxForce 10000.0 10000.0 10000.0
+                                      maxTorque 10000.0 10000.0 10000.0
+                                    }
+                                    DEF RL_6_Link Segment{
+                                      centerOfMass 0.05000000000000002 0.0 -0.055000000000000014
+                                      mass 1.07
+                                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                      children[
+                                        Transform {
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        Transform {
+                                          translation 0.05 0 -0.055
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Box{
+                                                size 0.2 0.1 0.05
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.4
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+            DEF RR_1 Joint {
+              jointType "rotate"
+              jointId 19
+              jointAxis 0.0 1.0 0.0
+              translation -0.075 -0.05 0
+              children[
+                DEF RR_1_Link Segment{
+                  centerOfMass 0.0 -0.05000000000000002 0.0
+                  mass 3.2
+                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                  children[
+                    Transform {
+                      translation 0 -0.05 0
+                      rotation 0 1 0 0
+                      children[
+                        Shape{
+                          geometry Cylinder{
+                            radius 0.05
+                            height 0.1
+                          }
+                          appearance Appearance{
+                            material Material{
+                              diffuseColor 0.8 0.8 0.8
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+                DEF RR_2 Joint {
+                  jointType "rotate"
+                  jointId 20
+                  jointAxis 1.0 0.0 0.0
+                  translation 0 -0.1 0
+                  children[
+                    DEF RR_2_Link Segment{
+                      centerOfMass 0.0 0.0 0.0
+                      mass 2.2
+                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                      children[
+                        Transform {
+                          rotation 0 0 1 1.5708
+                          children[
+                            Shape{
+                              geometry Cylinder{
+                                radius 0.05
+                                height 0.1
+                              }
+                              appearance Appearance{
+                                material Material{
+                                  diffuseColor 0.8 0.8 0.8
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                    DEF RR_3 Joint {
+                      jointType "fixed"
+                      jointId 21
+                      translation 0 0 -0.05
+                      children[
+                        DEF RR_3_Link Segment{
+                          centerOfMass 0.0 0.0 -0.015000000000000006
+                          mass 0.10300000000000002
+                          momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                          children[
+                            Transform {
+                              rotation 1 0 0 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.05
+                                    height 0.05
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.4 0.4 0.4
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                            Transform {
+                              translation 0 0 -0.0775
+                              rotation 1 0 0 1.5708
+                              children[
+                                Shape{
+                                  geometry Cylinder{
+                                    radius 0.04
+                                    height 0.105
+                                  }
+                                  appearance Appearance{
+                                    material Material{
+                                      diffuseColor 0.8 0.8 0.8
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                        DEF RR_4 Joint {
+                          jointType "rotate"
+                          jointId 22
+                          jointAxis 0.0 1.0 0.0
+                          translation 0 0 -0.13
+                          children[
+                            DEF RR_4_Link Segment{
+                              centerOfMass 0.0 0.0 -0.1
+                              mass 2.314999999999999
+                              momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                              children[
+                                Transform {
+                                  rotation 0 1 0 0
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.04
+                                        height 0.1
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.8 0.8 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                                Transform {
+                                  translation 0 0 -0.1
+                                  rotation 1 0 0 1.5708
+                                  children[
+                                    Shape{
+                                      geometry Cylinder{
+                                        radius 0.03
+                                        height 0.2
+                                      }
+                                      appearance Appearance{
+                                        material Material{
+                                          diffuseColor 0.4 0.6 0.8
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            DEF RR_5 Joint {
+                              jointType "rotate"
+                              jointId 23
+                              jointAxis 0.0 1.0 0.0
+                              translation 0 0 -0.2
+                              children[
+                                DEF RR_5_Link Segment{
+                                  centerOfMass 0.0 0.0 -0.07500000000000002
+                                  mass 2.2863
+                                  momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                  children[
+                                    Transform {
+                                      rotation 0 1 0 0
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.1
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                    Transform {
+                                      translation 0 0 -0.075
+                                      rotation 1 0 0 1.5708
+                                      children[
+                                        Shape{
+                                          geometry Cylinder{
+                                            radius 0.03
+                                            height 0.15
+                                          }
+                                          appearance Appearance{
+                                            material Material{
+                                              diffuseColor 0.8 0.8 0.8
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                                DEF RR_6 Joint {
+                                  jointType "rotate"
+                                  jointId 24
+                                  jointAxis 0.0 1.0 0.0
+                                  translation 0 0 -0.15
+                                  children[
+                                    DEF force4 ForceSensor {
+                                      sensorId 3
+                                      translation 0 0 -0.08
+                                      maxForce 10000.0 10000.0 10000.0
+                                      maxTorque 10000.0 10000.0 10000.0
+                                    }
+                                    DEF RR_6_Link Segment{
+                                      centerOfMass 0.05000000000000002 0.0 -0.055000000000000014
+                                      mass 1.07
+                                      momentsOfInertia [ 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 ]
+                                      children[
+                                        Transform {
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Cylinder{
+                                                radius 0.03
+                                                height 0.1
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.8
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                        Transform {
+                                          translation 0.05 0 -0.055
+                                          rotation 0 1 0 0
+                                          children[
+                                            Shape{
+                                              geometry Box{
+                                                size 0.2 0.1 0.05
+                                              }
+                                              appearance Appearance{
+                                                material Material{
+                                                  diffuseColor 0.8 0.8 0.4
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  joints [
+    USE root,
+    USE CHEST,
+    USE SHOULDER,
+    USE FL_1,
+    USE FL_2,
+    USE FL_3,
+    USE FL_4,
+    USE FL_5,
+    USE FR_1,
+    USE FR_2,
+    USE FR_3,
+    USE FR_4,
+    USE FR_5,
+    USE WAIST,
+    USE RL_1,
+    USE RL_2,
+    USE RL_3,
+    USE RL_4,
+    USE RL_5,
+    USE RL_6,
+    USE RR_1,
+    USE RR_2,
+    USE RR_3,
+    USE RR_4,
+    USE RR_5,
+    USE RR_6,
+  ]
+  segments [
+    USE root_Link,
+    USE CHEST_Link,
+    USE SHOULDER_Link,
+    USE FL_1_Link,
+    USE FL_2_Link,
+    USE FL_3_Link,
+    USE FL_4_Link,
+    USE FL_5_Link,
+    USE FR_1_Link,
+    USE FR_2_Link,
+    USE FR_3_Link,
+    USE FR_4_Link,
+    USE FR_5_Link,
+    USE WAIST_Link,
+    USE RL_1_Link,
+    USE RL_2_Link,
+    USE RL_3_Link,
+    USE RL_4_Link,
+    USE RL_5_Link,
+    USE RL_6_Link,
+    USE RR_1_Link,
+    USE RR_2_Link,
+    USE RR_3_Link,
+    USE RR_4_Link,
+    USE RR_5_Link,
+    USE RR_6_Link,
+  ]
+}
